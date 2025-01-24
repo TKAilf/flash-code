@@ -22,3 +22,6 @@ dist-ssr
 *.sw?
 
 *log
+.prettierrc
+.vscode
+*.lock
