@@ -34,17 +34,29 @@ function App() {
     }, []);
 
     const fetchWindows = async () => {
+        await fetchGetTaskbarApps();
+        await fetchGetConfig();
+    };
+
+    const fetchGetTaskbarApps = async () => {
         try {
             const windows: AppInfo[] = await invoke("get_taskbar_apps");
+            setAvailableItems(windows);
+        } catch (e) {
+            error(`get_taskbar_apps呼び出しでエラーが発生しました: ${e}`);
+        }
+    };
+
+    const fetchGetConfig = async () => {
+        try {
             const url: string = await invoke("get_webhook_url");
             const threshold: string = await invoke("get_threshold");
             const interval: string = await invoke("get_interval");
-            setAvailableItems(windows);
             setCurrentWebhookUrl(url);
             setCurrentThreshold(threshold);
             setCurrentInterval(interval);
         } catch (e) {
-            error(`get_taskbar_apps呼び出しでエラーが発生しました: ${e}`);
+            error(`get_config呼び出しでエラーが発生しました: ${e}`);
         }
     };
 
