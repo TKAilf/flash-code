@@ -37,7 +37,9 @@ fn main() {
                     if let Ok(_) = fs::write(
                         &config_file,
                         r#"{
-    "DISCORD_WEBHOOK_URL": "ここにDiscordBotURLを入力してください"
+    "DISCORD_WEBHOOK_URL": "ここにDiscordBotURLを入力してください",
+    "THRESHOLD": "0.034",
+    "INTERVAL": "3000"
 }"#,
                     ) {
                         info!("設定ファイルを作成しました。");
@@ -75,9 +77,13 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::start_monitoring,
             commands::stop_monitoring,
-            commands::update_webhook_url,
             commands::get_taskbar_apps,
-            commands::get_webhook_url
+            commands::update_webhook_url,
+            commands::update_threshold,
+            commands::update_interval,
+            commands::get_webhook_url,
+            commands::get_threshold,
+            commands::get_interval
         ])
         .run(tauri::generate_context!())
         .expect("tauri::Builder::default() | run: error while running tauri application");

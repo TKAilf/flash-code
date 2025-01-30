@@ -201,7 +201,7 @@ button {
     background-color: #e53935;
 }
 
-.webhook-container {
+.config-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -209,15 +209,15 @@ button {
     padding: 20px 30px;
 }
 
-.webhook-container .set-webhook-url-group {
+.config-container .set-config-group {
     display: flex;
     flex-direction: row;
     gap: 10px;
     width: 100%;
 }
 
-.webhook-container .setting-webhook-url-group {
-    margin-top: 10px;
+.config-container .current-value-group {
+    margin: 10px 0;
     align-self: flex-start;
     white-space: nowrap;
     overflow: hidden;
@@ -225,7 +225,7 @@ button {
     max-width: 100%;
 }
 
-.webhook-container input {
+.config-container input {
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -234,7 +234,7 @@ button {
     flex: 1;
 }
 
-.webhook-container button {
+.config-container button {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: bold;
@@ -246,7 +246,7 @@ button {
     transition: background-color 0.3s;
 }
 
-.webhook-container button:hover {
+.config-container button:hover {
     background-color: #45a049;
 }
 

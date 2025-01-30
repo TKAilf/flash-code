@@ -21,7 +21,11 @@ function App() {
         index: number;
     }>({ item: null, index: -1 });
     const [webhookUrl, setWebhookUrl] = useState<string>("");
-    const [settingWebhookUrl, setSettingWebhookUrl] = useState<string>("");
+    const [threshold, setThreshold] = useState<string>("");
+    const [interval, setInterval] = useState<string>("");
+    const [currentWebhookUrl, setCurrentWebhookUrl] = useState<string>("");
+    const [currentThreshold, setCurrentThreshold] = useState<string>("");
+    const [currentInterval, setCurrentInterval] = useState<string>("");
 
     useEffect(() => {
         attachConsole();
@@ -33,8 +37,12 @@ function App() {
         try {
             const windows: AppInfo[] = await invoke("get_taskbar_apps");
             const url: string = await invoke("get_webhook_url");
+            const threshold: string = await invoke("get_threshold");
+            const interval: string = await invoke("get_interval");
             setAvailableItems(windows);
-            setSettingWebhookUrl(url);
+            setCurrentWebhookUrl(url);
+            setCurrentThreshold(threshold);
+            setCurrentInterval(interval);
         } catch (e) {
             error(`get_taskbar_apps呼び出しでエラーが発生しました: ${e}`);
         }
@@ -175,12 +183,42 @@ function App() {
         setWebhookUrl(event.target.value);
     };
 
-    const handleAddWebhookUrl = async () => {
+    const handleThresholdChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setThreshold(event.target.value);
+    };
+
+    const handleIntervalChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setInterval(event.target.value);
+    };
+
+    const handleSetWebhookUrl = async () => {
         try {
             await invoke("update_webhook_url", { url: webhookUrl });
-            setSettingWebhookUrl(webhookUrl);
+            setCurrentWebhookUrl(webhookUrl);
         } catch (e) {
             error(`updated_webhook_url呼び出しでエラーが起きました: ${e}`);
+        }
+    };
+
+    const handleSetThreshold = async () => {
+        try {
+            await invoke("update_threshold", { threshold: threshold });
+            setCurrentThreshold(threshold);
+        } catch (e) {
+            error(`update_threshold呼び出しでエラーが起きました: ${e}`);
+        }
+    };
+
+    const handleSetInterval = async () => {
+        try {
+            await invoke("update_interval", { interval: interval });
+            setCurrentInterval(interval);
+        } catch (e) {
+            error(`update_interval呼び出しでエラーが起きました: ${e}`);
         }
     };
 
@@ -206,18 +244,42 @@ function App() {
                     onItemClick={handleMonitoredItemClick}
                 />
             </div>
-            <div className="webhook-container">
-                <div className="set-webhook-url-group">
+            <div className="config-container">
+                <div className="set-config-group">
                     <input
                         type="text"
                         value={webhookUrl}
                         onChange={handleWebhookUrlChange}
                         placeholder="Discord Webhook URLを入力"
                     />
-                    <button onClick={handleAddWebhookUrl}>設定</button>
+                    <button onClick={handleSetWebhookUrl}>設定</button>
                 </div>
-                <div className="setting-webhook-url-group">
-                    設定中のURL: {settingWebhookUrl}
+                <div className="current-value-group">
+                    設定中のURL: {currentWebhookUrl}
+                </div>
+                <div className="set-config-group">
+                    <input
+                        type="text"
+                        value={threshold}
+                        onChange={handleThresholdChange}
+                        placeholder="しきい値を入力"
+                    />
+                    <button onClick={handleSetThreshold}>設定</button>
+                </div>
+                <div className="current-value-group">
+                    設定中のしきい値: {currentThreshold}
+                </div>
+                <div className="set-config-group">
+                    <input
+                        type="text"
+                        value={interval}
+                        onChange={handleIntervalChange}
+                        placeholder="監視間隔（ms）を入力"
+                    />
+                    <button onClick={handleSetInterval}>設定</button>
+                </div>
+                <div className="current-value-group">
+                    設定中の監視間隔（ms）: {currentInterval}
                 </div>
             </div>
             <PrimaryActionButtons

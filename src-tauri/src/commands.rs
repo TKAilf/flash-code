@@ -155,6 +155,34 @@ pub async fn update_webhook_url(
     }
 }
 
+#[tauri::command]
+pub async fn update_threshold(
+    config_state: State<'_, ConfigState>,
+    threshold: String,
+) -> Result<(), String> {
+    match crate::config_manager::update_threshold(config_state, threshold).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("しきい値の更新に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn update_interval(
+    config_state: State<'_, ConfigState>,
+    interval: String,
+) -> Result<(), String> {
+    match crate::config_manager::update_interval(config_state, interval).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("監視間隔の更新に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
 /// Webhook URLを取得する関数。
 ///
 /// # 概要
@@ -192,6 +220,28 @@ pub async fn get_webhook_url(config_state: State<'_, ConfigState>) -> Result<Str
         Ok(url) => Ok(url),
         Err(e) => {
             error!("Webhook URLの取得に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_threshold(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    match crate::config_manager::get_threshold(config_state).await {
+        Ok(url) => Ok(url),
+        Err(e) => {
+            error!("しきい値の取得に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    match crate::config_manager::get_interval(config_state).await {
+        Ok(url) => Ok(url),
+        Err(e) => {
+            error!("監視間隔の取得に失敗しました: {}", e);
             Err(e)
         }
     }

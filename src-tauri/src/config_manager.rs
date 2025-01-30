@@ -5,70 +5,43 @@ use tauri::State;
 
 use crate::window_utils::ConfigState;
 
-/// Webhook URLを更新する関数。
-///
-/// # 概要
-/// 設定ファイル（appsettings.json）の`DISCORD_WEBHOOK_URL`項目を更新します。  
-/// 新しいWebhook URLを指定し、設定ファイルに保存します。
-///
-/// # 引数
-/// * `config_state` - 設定ファイルのパスを管理する `ConfigState`。
-/// * `url` - 新しいWebhook URL。
-///
-/// # 戻り値
-/// `Result`:
-/// - `Ok(())`: Webhook URLが正常に更新された場合。
-/// - `Err(String)`: 設定ファイルの読み書きや解析に失敗した場合、そのエラー内容を含むメッセージ。
-///
-/// # 注意点
-/// - URLの形式が正しいかどうかはこの関数では検証されません。
-/// - 書き込み権限がない場合や設定ファイルが壊れている場合、エラーが発生します。
-///
-/// # 使用例
-/// ```rust
-/// use tauri::State;
-/// use flash_code::ConfigState;
-///
-/// #[tauri::command]
-/// async fn update_webhook_url_example(config_state: State<'_, ConfigState>, url: String) {
-///     match update_webhook_url(config_state, url).await {
-///         Ok(_) => println!("Webhook URLが正常に更新されました。"),
-///         Err(e) => eprintln!("Webhook URLの更新に失敗しました: {}", e),
-///     }
-/// }
-/// ```
-///
 pub async fn update_webhook_url(
     config_state: State<'_, ConfigState>,
     url: String,
 ) -> Result<(), String> {
-    let config_path = config_state.path.to_string_lossy().to_string();
+    update_config_value(
+        config_state,
+        "DISCORD_WEBHOOK_URL",
+        &url,
+        "Webhook URLを更新しました",
+    )
+    .await
+}
 
-    let mut json_value: Value = match read_config_file(&config_path) {
-        Ok(value) => value,
-        Err(e) => {
-            error!("設定ファイルの読み込みに失敗しました: {:?}", e);
-            return Err(e);
-        }
-    };
+pub async fn update_threshold(
+    config_state: State<'_, ConfigState>,
+    threshold: String,
+) -> Result<(), String> {
+    update_config_value(
+        config_state,
+        "THRESHOLD",
+        &threshold,
+        "しきい値を更新しました",
+    )
+    .await
+}
 
-    if let Some(obj) = json_value.as_object_mut() {
-        obj.insert(
-            "DISCORD_WEBHOOK_URL".to_string(),
-            Value::String(url.clone()),
-        );
-    }
-
-    match write_config_file(&config_path, &json_value) {
-        Ok(_) => {}
-        Err(e) => {
-            error!("設定ファイルの書き込みに失敗しました: {:?}", e);
-            return Err(e);
-        }
-    };
-
-    info!("Webhook URLを更新しました: {}", url);
-    Ok(())
+pub async fn update_interval(
+    config_state: State<'_, ConfigState>,
+    interval: String,
+) -> Result<(), String> {
+    update_config_value(
+        config_state,
+        "INTERVAL",
+        &interval,
+        "監視間隔を更新しました",
+    )
+    .await
 }
 
 /// Webhook URLを取得する関数。
@@ -103,6 +76,21 @@ pub async fn update_webhook_url(
 /// ```
 ///
 pub async fn get_webhook_url(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    get_config_value(config_state, "DISCORD_WEBHOOK_URL").await
+}
+
+pub async fn get_threshold(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    get_config_value(config_state, "THRESHOLD").await
+}
+
+pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    get_config_value(config_state, "INTERVAL").await
+}
+
+async fn get_config_value(
+    config_state: State<'_, ConfigState>,
+    key: &str,
+) -> Result<String, String> {
     let config_path = config_state.path.to_string_lossy().to_string();
     let json_value: Value = match read_config_file(&config_path) {
         Ok(value) => value,
@@ -112,13 +100,45 @@ pub async fn get_webhook_url(config_state: State<'_, ConfigState>) -> Result<Str
         }
     };
 
-    json_value["DISCORD_WEBHOOK_URL"]
+    json_value[key]
         .as_str()
-        .map(|url| url.to_string())
+        .map(|v| v.to_string())
         .ok_or_else(|| {
-            error!("設定ファイルにDISCORD_WEBHOOK_URLが設定されていません。");
-            "Webhook URLが設定されていません".to_string()
+            let error_message = format!("設定ファイルに{}が設定されていません", key);
+            error!("{}", error_message);
+            error_message
         })
+}
+
+async fn update_config_value(
+    config_state: State<'_, ConfigState>,
+    key: &str,
+    value: &str,
+    success_log: &str,
+) -> Result<(), String> {
+    let config_path = config_state.path.to_string_lossy().to_string();
+    let mut json_value: Value = match read_config_file(&config_path) {
+        Ok(value) => value,
+        Err(e) => {
+            error!("設定ファイルの読み込みに失敗しました: {:?}", e);
+            return Err(e);
+        }
+    };
+
+    if let Some(obj) = json_value.as_object_mut() {
+        obj.insert(key.to_string(), Value::String(value.to_string()));
+    }
+
+    match write_config_file(&config_path, &json_value) {
+        Ok(_) => {
+            info!("{}: {}", success_log, value);
+            Ok(())
+        }
+        Err(e) => {
+            error!("設定ファイルの書き込みに失敗しました: {:?}", e);
+            Err(e)
+        }
+    }
 }
 
 /// 設定ファイルを読み込み、`serde_json::Value` として返す関数。
