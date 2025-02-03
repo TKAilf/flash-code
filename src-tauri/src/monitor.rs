@@ -16,7 +16,7 @@ use windows::Win32::Foundation::HWND;
 ///
 /// # 引数
 /// - `app_info`: 監視対象アプリケーションの情報（`AppInfo`）。
-/// - `interval_ms`: チェック間隔（ミリ秒）。
+/// - `interval`: チェック間隔（ミリ秒）。
 /// - `threshold`: 画像比較のしきい値（`0.0〜1.0`）。
 /// - `config_path`: 通知送信に必要な設定ファイルのパス。
 ///
@@ -26,28 +26,33 @@ use windows::Win32::Foundation::HWND;
 /// use std::path::PathBuf;
 ///
 /// let app_info = AppInfo { /* 初期化 */ };
-/// let interval_ms = 5000;
-/// let threshold = 0.05;
+/// let interval = 3000;
+/// let threshold = 0.034;
 /// let config_path = PathBuf::from("path/to/config.json");
 ///
-/// monitor_app_icon(app_info, interval_ms, threshold, config_path).await;
+/// monitor_app_icon(app_info, interval, threshold, config_path).await;
 /// ```
 ///
 pub async fn monitor_app_icon(
     app_info: AppInfo,
-    interval_ms: u64,
+    interval: u64,
     threshold: f32,
     config_path: PathBuf,
 ) {
     info!("monitor_app_iconを呼び出しました。");
     // 初期状態のアイコン画像を取得
-    let initial_image =
-        capture_icon_image(HWND(app_info.hwnd as *mut _)).expect("初期画像の取得に失敗しました");
+    let initial_image = match capture_icon_image(HWND(app_info.hwnd as *mut _)) {
+        Some(img) => img,
+        None => {
+            error!("初期画像の取得に失敗しました。");
+            return;
+        }
+    };
 
     info!("アイコンの監視ループを開始します。");
     loop {
         // 一定時間待機
-        sleep(Duration::from_millis(interval_ms)).await;
+        sleep(Duration::from_millis(interval)).await;
 
         // 現在のアイコン画像を取得
         let current_image = match capture_icon_image(HWND(app_info.hwnd as *mut _)) {

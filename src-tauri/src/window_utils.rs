@@ -74,7 +74,7 @@ impl MonitorState {
     pub async fn monitor_target<'a>(
         &self,
         app_info: AppInfo,
-        interval_ms: u64,
+        interval: u64,
         threshold: f32,
         config_state: State<'a, ConfigState>,
     ) {
@@ -82,7 +82,7 @@ impl MonitorState {
         let app_name = app_info.name.clone();
         let config_path = config_state.path.clone();
         let handle = tauri::async_runtime::spawn(async move {
-            monitor_app_icon(app_info, interval_ms, threshold, config_path).await;
+            monitor_app_icon(app_info, interval, threshold, config_path).await;
         });
         self.tasks.lock().await.insert(app_name, handle);
     }
