@@ -10,46 +10,22 @@ mod monitor;
 mod screen_capture;
 mod window_collection;
 mod window_utils;
-use std::{env, fs};
+use std::env;
 
-use log::{info, warn};
+use log::warn;
 use tauri::Manager;
 use tauri_plugin_log::LogTarget;
-use window_utils::{ConfigState, MonitorState};
+use window_utils::{get_or_create_config_file_path, ConfigState, MonitorState};
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
             // アプリのシステム設定フォルダパスを取得
             if let Some(config_dir) = app.path_resolver().app_config_dir() {
-                let config_file = config_dir.join("appsettings.json");
-
-                // 設定ファイルの存在を確認なければ作成
-                if !config_file.exists() {
-                    info!("設定ファイルが存在しません。デフォルトの設定ファイルを生成します。");
-
-                    if let Ok(_) = fs::create_dir_all(&config_dir) {
-                        info!("設定ファイルのディレクトリを作成しました。");
-                    } else {
-                        warn!("設定ファイルのディレクトリの作成に失敗しました。");
-                    };
-
-                    if let Ok(_) = fs::write(
-                        &config_file,
-                        r#"{
-    "DISCORD_WEBHOOK_URL": "ここにDiscordBotURLを入力してください",
-    "THRESHOLD": "0.034",
-    "INTERVAL": "3000"
-}"#,
-                    ) {
-                        info!("設定ファイルを作成しました。");
-                    } else {
-                        warn!("設定ファイルの作成に失敗しました。");
-                    };
-                } else {
-                    info!("設定ファイルが存在します。");
-                }
-                app.manage(ConfigState { path: config_file });
+                let config_file = get_or_create_config_file_path(&config_dir, "appsettings.json");
+                app.manage(ConfigState {
+                    path: config_file.clone(),
+                });
             } else {
                 warn!("アプリのシステム設定フォルダパスが取得できませんでした。");
             }

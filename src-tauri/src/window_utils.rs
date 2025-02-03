@@ -1,5 +1,7 @@
-use log::info;
+use log::{info, warn};
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::Path;
 use std::{collections::HashMap, path::PathBuf, ptr::null_mut};
 use tauri::async_runtime::{JoinHandle, Mutex};
 use tauri::State;
@@ -334,5 +336,82 @@ impl Drop for ComWrapper {
         unsafe {
             let _ = CoUninitialize();
         }
+    }
+}
+
+/// 設定ディレクトリ内に指定された設定ファイルが存在するか確認し、
+/// 存在しなければ設定ファイルのディレクトリを作成し、デフォルト内容で初期化します。
+///
+/// # 引数
+/// * `config_dir` - 設定ファイルが格納されるディレクトリへのパス。
+/// * `file_name` - 設定ファイルの名前（例: "appsettings.json"）。
+///
+/// # 戻り値
+/// 設定ファイルの完全なパス (PathBuf) を返します。
+///
+/// # 処理の概要
+/// 1. `config_dir` と `file_name` を結合して、設定ファイルのパスを生成します。
+/// 2. そのパスにファイルが存在しなければ、
+///    - 指定ディレクトリを作成し、
+///    - デフォルト設定の内容で設定ファイルを初期化（書き込み）します。
+/// 3. 既に設定ファイルが存在する場合は、その旨をログに出力し、パスを返します。
+///
+/// # 例
+/// ```rust
+/// use std::path::Path;
+/// let config_dir = Path::new("/path/to/config");
+/// let config_file = get_or_create_config_file_path(&config_dir, "appsettings.json");
+/// println!("Config file path: {:?}", config_file);
+/// ```
+///
+pub fn get_or_create_config_file_path(config_dir: &Path, file_name: &str) -> PathBuf {
+    let config_file = config_dir.join(file_name);
+    // 設定ファイルの存在を確認し、なければ作成する処理
+    if !config_file.exists() {
+        info!("設定ファイルが存在しません。デフォルトの設定ファイルを生成します。");
+
+        match fs::create_dir_all(config_dir) {
+            Ok(_) => info!("設定ファイルのディレクトリを作成しました。"),
+            Err(e) => warn!("設定ファイルのディレクトリの作成に失敗しました: {:?}", e),
+        };
+
+        initilize_config_file(&config_file);
+    } else {
+        info!("設定ファイルが存在します。");
+    }
+
+    config_file
+}
+
+/// 指定されたパスにデフォルトの設定ファイル ("appsettings.json") を初期化（書き込み）します。
+///
+/// 書き込み内容は以下のJSON形式で、各項目はユーザーが後で更新する前提です:
+/// {
+///     "DISCORD_WEBHOOK_URL": "ここにDiscordBotURLを入力してください",
+///     "THRESHOLD": "0.034",
+///     "INTERVAL": "3000"
+/// }
+///
+/// # 引数
+/// * `config_file` - 初期化する設定ファイルへのパス。
+///
+/// # 例
+/// ```rust
+/// use std::path::Path;
+/// let config_file = Path::new("/path/to/appsettings.json");
+/// initilize_config_file(&config_file);
+/// ```
+///
+pub fn initilize_config_file(config_file: &Path) {
+    match fs::write(
+        config_file,
+        r#"{
+"DISCORD_WEBHOOK_URL": "DiscordBotURLを入力してください",
+"THRESHOLD": "0.034",
+"INTERVAL": "3000"
+}"#,
+    ) {
+        Ok(_) => info!("設定ファイルを初期化しました。"),
+        Err(e) => warn!("設定ファイルの初期化に失敗しました: {:?}", e),
     }
 }

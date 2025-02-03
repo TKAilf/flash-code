@@ -1,9 +1,9 @@
-use log::{error, info};
+use log::{error, info, warn};
 use serde_json::Value;
 use std::fs;
 use tauri::State;
 
-use crate::window_utils::ConfigState;
+use crate::window_utils::{get_or_create_config_file_path, initilize_config_file, ConfigState};
 
 pub async fn update_webhook_url(
     config_state: State<'_, ConfigState>,
@@ -44,37 +44,6 @@ pub async fn update_interval(
     .await
 }
 
-/// Webhook URLを取得する関数。
-///
-/// # 概要
-/// 設定ファイル（appsettings.json）から`DISCORD_WEBHOOK_URL`項目を取得します。
-///
-/// # 引数
-/// * `config_state` - 設定ファイルのパスを管理する `ConfigState`。
-///
-/// # 戻り値
-/// `Result`:
-/// - `Ok(String)`: Webhook URLが正常に取得された場合。その値を返します。
-/// - `Err(String)`: 設定ファイルの読み取りや解析に失敗した場合、または`DISCORD_WEBHOOK_URL`が存在しない場合にエラーメッセージを返します。
-///
-/// # 注意点
-/// - 設定ファイルが存在しない、または正しく構成されていない場合、エラーとなります。
-/// - `DISCORD_WEBHOOK_URL`が設定されていない場合、エラーが返されます。
-///
-/// # 使用例
-/// ```rust
-/// use tauri::State;
-/// use flash_code::ConfigState;
-///
-/// #[tauri::command]
-/// async fn get_webhook_url_example(config_state: State<'_, ConfigState>) {
-///     match get_webhook_url(config_state).await {
-///         Ok(url) => println!("Webhook URL: {}", url),
-///         Err(e) => eprintln!("Webhook URLの取得に失敗しました: {}", e),
-///     }
-/// }
-/// ```
-///
 pub async fn get_webhook_url(config_state: State<'_, ConfigState>) -> Result<String, String> {
     get_config_value(config_state, "DISCORD_WEBHOOK_URL").await
 }
@@ -87,27 +56,67 @@ pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String
     get_config_value(config_state, "INTERVAL").await
 }
 
+/// 非同期関数 get_config_value
+///
+/// # 概要
+/// 指定された設定ファイルから、与えられたキーに対応する値を取得します。  
+/// もし設定ファイルの読み込みに失敗した場合、親ディレクトリから設定ファイルを再生成し、  
+/// 再試行するループ処理を実装しています。
+///
+/// # 引数
+/// * `config_state` - 設定ファイルのパスなどの状態を保持する `ConfigState` のラッパー（Tauri の State）
+/// * `key` - 取得対象の設定キー
+///
+/// # 戻り値
+/// * `Ok(String)` - 設定ファイルに指定されたキーが存在し、その値が文字列として取得できた場合
+/// * `Err(String)` - 設定ファイルの読み込みに失敗した場合や、指定されたキーが存在しない場合のエラーメッセージ
+///
+/// # 処理の概要
+/// 1. 設定ファイルのパス（`config_state.path`）からファイル内容を読み込み、JSONとして解析する。
+/// 2. もし読み込みに失敗した場合、親ディレクトリから `appsettings.json` を再生成するため  
+///    `get_or_create_config_file_path` を呼び出し、再試行のためループ先頭に戻る。
+/// 3. JSON 内に指定されたキーが存在する場合、その値を文字列として返す。存在しなければエラーを返す.
+///
+/// # 例
+/// ```rust
+/// #[tauri::command]
+/// async fn example(config_state: State<'_, ConfigState>) {
+///     match get_config_value(config_state, "THRESHOLD").await {
+///         Ok(value) => println!("しきい値: {}", value),
+///         Err(e) => eprintln!("取得に失敗: {}", e),
+///     }
+/// }
+/// ```
+///
 async fn get_config_value(
     config_state: State<'_, ConfigState>,
     key: &str,
 ) -> Result<String, String> {
-    let config_path = config_state.path.to_string_lossy().to_string();
-    let json_value: Value = match read_config_file(&config_path) {
-        Ok(value) => value,
-        Err(e) => {
-            error!("設定ファイルの読み込みに失敗しました: {:?}", e);
-            return Err(e);
-        }
-    };
+    loop {
+        let config_path = config_state.path.to_string_lossy().to_string();
+        let json_value: Value = match read_config_file(&config_path) {
+            Ok(value) => value,
+            Err(e) => {
+                error!("設定ファイルの読み込みに失敗しました: {:?}", e);
+                if let Some(parent_dir) = config_state.path.parent() {
+                    let config_file =
+                        get_or_create_config_file_path(&parent_dir, "appsettings.json");
+                    initilize_config_file(&config_file);
+                    // ファイルを再生成した後、ループの先頭に戻り再試行する
+                    continue;
+                } else {
+                    warn!("親ディレクトリが見つかりません。");
+                    return Err(e);
+                }
+            }
+        };
 
-    json_value[key]
-        .as_str()
-        .map(|v| v.to_string())
-        .ok_or_else(|| {
-            let error_message = format!("設定ファイルに{}が設定されていません", key);
-            error!("{}", error_message);
-            error_message
-        })
+        if let Some(value_str) = json_value[key].as_str() {
+            return Ok(value_str.to_string());
+        } else {
+            return Err("指定されたキーが見つかりません".to_string());
+        }
+    }
 }
 
 async fn update_config_value(
