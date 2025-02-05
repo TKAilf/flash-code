@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
-import "./mystyle.css";
 import { info, error, attachConsole } from "tauri-plugin-log-api";
+import { dialog } from "@tauri-apps/api";
 import ListSection from "./ListSection";
 import MoveButtons from "./MoveButtons";
 import PrimaryActionButtons from "./PrimaryActionButtons";
 import { AppInfo } from "./types";
-import { dialog } from "@tauri-apps/api";
+import { ConfigContainer } from "./ConfigContainer";
+import "./App.css";
+import "./mystyle.css";
 
 function App() {
     const [availableItems, setAvailableItems] = useState<AppInfo[]>([]);
@@ -256,44 +257,20 @@ function App() {
                     onItemClick={handleMonitoredItemClick}
                 />
             </div>
-            <div className="config-container">
-                <div className="set-config-group">
-                    <input
-                        type="text"
-                        value={webhookUrl}
-                        onChange={handleWebhookUrlChange}
-                        placeholder="Discord Webhook URLを入力"
-                    />
-                    <button onClick={handleSetWebhookUrl}>設定</button>
-                </div>
-                <div className="current-value-group">
-                    設定中のURL: {currentWebhookUrl}
-                </div>
-                <div className="set-config-group">
-                    <input
-                        type="text"
-                        value={threshold}
-                        onChange={handleThresholdChange}
-                        placeholder="しきい値を入力"
-                    />
-                    <button onClick={handleSetThreshold}>設定</button>
-                </div>
-                <div className="current-value-group">
-                    設定中のしきい値: {currentThreshold}
-                </div>
-                <div className="set-config-group">
-                    <input
-                        type="text"
-                        value={interval}
-                        onChange={handleIntervalChange}
-                        placeholder="監視間隔（ms）を入力"
-                    />
-                    <button onClick={handleSetInterval}>設定</button>
-                </div>
-                <div className="current-value-group">
-                    設定中の監視間隔（ms）: {currentInterval}
-                </div>
-            </div>
+            <ConfigContainer
+                webhookUrl={webhookUrl}
+                handleWebhookUrlChange={handleWebhookUrlChange}
+                handleSetWebhookUrl={handleSetWebhookUrl}
+                currentWebhookUrl={currentWebhookUrl}
+                threshold={threshold}
+                handleThresholdChange={handleThresholdChange}
+                handleSetThreshold={handleSetThreshold}
+                currentThreshold={currentThreshold}
+                interval={interval}
+                handleIntervalChange={handleIntervalChange}
+                handleSetInterval={handleSetInterval}
+                currentInterval={currentInterval}
+            />
             <PrimaryActionButtons
                 onMonitorAll={handleMonitorAll}
                 onMonitor={handleMonitor}
