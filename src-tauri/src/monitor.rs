@@ -27,7 +27,7 @@ use windows::Win32::Foundation::HWND;
 ///
 /// let app_info = AppInfo { /* 初期化 */ };
 /// let interval = 3000;
-/// let threshold = 0.034;
+/// let threshold = 0.050;
 /// let config_path = PathBuf::from("path/to/config.json");
 ///
 /// monitor_app_icon(app_info, interval, threshold, config_path).await;

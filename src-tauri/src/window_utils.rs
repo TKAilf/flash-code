@@ -388,7 +388,7 @@ pub fn get_or_create_config_file_path(config_dir: &Path, file_name: &str) -> Pat
 /// 書き込み内容は以下のJSON形式で、各項目はユーザーが後で更新する前提です:
 /// {
 ///     "DISCORD_WEBHOOK_URL": "ここにDiscordBotURLを入力してください",
-///     "THRESHOLD": "0.034",
+///     "THRESHOLD": "0.050",
 ///     "INTERVAL": "3000"
 /// }
 ///
@@ -407,7 +407,7 @@ pub fn initilize_config_file(config_file: &Path) {
         config_file,
         r#"{
 "DISCORD_WEBHOOK_URL": "DiscordBotURLを入力してください",
-"THRESHOLD": "0.034",
+"THRESHOLD": "0.050",
 "INTERVAL": "3000"
 }"#,
     ) {
