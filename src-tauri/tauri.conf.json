@@ -48,6 +48,9 @@
             "targets": ["msi", "nsis"],
             "identifier": "com.flash-code.app",
             "resources": ["app.manifest"],
+            "icon": [
+                "icons/icon.ico"
+            ],
             "windows": {
                 "webviewInstallMode": {
                     "type": "embedBootstrapper"
