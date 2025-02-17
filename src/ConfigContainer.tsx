@@ -6,7 +6,10 @@ interface ConfigContainerProps {
     handleSetWebhookUrl: () => void;
     currentWebhookUrl: string;
     threshold: string;
-    handleThresholdChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleThresholdTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleThresholdSelectChange: (
+        e: React.ChangeEvent<HTMLSelectElement>
+    ) => void;
     handleSetThreshold: () => void;
     currentThreshold: string;
     interval: string;
@@ -21,7 +24,8 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     handleSetWebhookUrl,
     currentWebhookUrl,
     threshold,
-    handleThresholdChange,
+    handleThresholdTextChange,
+    handleThresholdSelectChange,
     handleSetThreshold,
     currentThreshold,
     interval,
@@ -29,6 +33,9 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     handleSetInterval,
     currentInterval,
 }) => {
+    const [isDetailedThreshold, setIsDetailedThreshold] = React.useState(false);
+    const toggleThresholdMode = () => setIsDetailedThreshold((prev) => !prev);
+
     return (
         <div className="config-container">
             <div className="set-config-group">
@@ -43,13 +50,37 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
             <div className="current-value-group">
                 設定中のURL: {currentWebhookUrl}
             </div>
+            <div className="toggle-group">
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={isDetailedThreshold}
+                        onChange={toggleThresholdMode}
+                    />
+                    詳細入力モード
+                </label>
+            </div>
             <div className="set-config-group">
-                <input
-                    type="text"
-                    value={threshold}
-                    onChange={handleThresholdChange}
-                    placeholder="しきい値を入力"
-                />
+                {isDetailedThreshold ? (
+                    <input
+                        value={threshold}
+                        onChange={(e) =>
+                            handleThresholdTextChange(
+                                e as unknown as React.ChangeEvent<HTMLInputElement>
+                            )
+                        }
+                        placeholder="しきい値を詳細に入力"
+                    />
+                ) : (
+                    <select
+                        value={threshold}
+                        onChange={handleThresholdSelectChange}
+                    >
+                        <option value="0.75">高精度</option>
+                        <option value="0.50">自動（推奨）</option>
+                        <option value="0.25">低精度</option>
+                    </select>
+                )}
                 <button onClick={handleSetThreshold}>設定</button>
             </div>
             <div className="current-value-group">

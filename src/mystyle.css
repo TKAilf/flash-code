@@ -228,6 +228,12 @@ button {
     max-width: 100%;
 }
 
+.config-container .toggle-group {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 .config-container input {
     padding: 10px;
     font-size: 16px;

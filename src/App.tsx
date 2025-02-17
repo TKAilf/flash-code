@@ -196,8 +196,14 @@ function App() {
         setWebhookUrl(event.target.value);
     };
 
-    const handleThresholdChange = (
+    const handleThresholdTextChange = (
         event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setThreshold(event.target.value);
+    };
+
+    const handleThresholdSelectChange = (
+        event: React.ChangeEvent<HTMLSelectElement>
     ) => {
         setThreshold(event.target.value);
     };
@@ -263,7 +269,8 @@ function App() {
                 handleSetWebhookUrl={handleSetWebhookUrl}
                 currentWebhookUrl={currentWebhookUrl}
                 threshold={threshold}
-                handleThresholdChange={handleThresholdChange}
+                handleThresholdTextChange={handleThresholdTextChange}
+                handleThresholdSelectChange={handleThresholdSelectChange}
                 handleSetThreshold={handleSetThreshold}
                 currentThreshold={currentThreshold}
                 interval={interval}
