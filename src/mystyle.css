@@ -234,6 +234,42 @@ button {
     margin-bottom: 10px;
 }
 
+.config-container .toggle-group .toggle-button {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 30px;
+    border-radius: 50px;
+    background-color: #dddddd;
+    cursor: pointer;
+    transition: background-color .4s;
+}
+
+.config-container .toggle-group .toggle-button:has(:checked) {
+    background-color: #4bd865;
+}
+
+.config-container .toggle-group .toggle-button::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgb(0 0 0 / 20%);
+    background-color: #fff;
+    content: '';
+    transition: left .4s;
+}
+
+.config-container .toggle-group .toggle-button:has(:checked)::after {
+    left: 30px;
+}
+
+.config-container .toggle-group .toggle-button input {
+    display: none;
+}
+
 .config-container input {
     padding: 10px;
     font-size: 16px;

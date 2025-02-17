@@ -51,7 +51,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                 設定中のURL: {currentWebhookUrl}
             </div>
             <div className="toggle-group">
-                <label>
+                <label className="toggle-button">
                     <input
                         type="checkbox"
                         checked={isDetailedThreshold}
