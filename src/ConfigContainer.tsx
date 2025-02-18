@@ -51,14 +51,16 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                 設定中のURL: {currentWebhookUrl}
             </div>
             <div className="toggle-group">
+                <span className="toggle-description">2. しきい値のモード設定</span>
+                <span className="toggle-text-before">簡易</span>
                 <label className="toggle-button">
                     <input
                         type="checkbox"
                         checked={isDetailedThreshold}
                         onChange={toggleThresholdMode}
                     />
-                    詳細入力モード
                 </label>
+                <span className="toggle-text-after">詳細</span>
             </div>
             <div className="set-config-group">
                 {isDetailedThreshold ? (
@@ -69,7 +71,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                 e as unknown as React.ChangeEvent<HTMLInputElement>
                             )
                         }
-                        placeholder="しきい値を詳細に入力"
+                        placeholder="しきい値を入力"
                     />
                 ) : (
                     <select

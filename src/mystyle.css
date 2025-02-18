@@ -216,21 +216,43 @@ button {
     flex-direction: row;
     gap: 10px;
     width: 100%;
+    margin-left: 30px;
 }
 
 .config-container .current-value-group {
-    margin: 10px 0;
-    align-self: flex-start;
+    display: flex;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+    margin: 10px 0 10px 30px;
 }
 
 .config-container .toggle-group {
     display: flex;
     width: 100%;
     margin-bottom: 10px;
+    align-items: center;
+    gap: 10px;
+}
+
+.config-container .toggle-group .toggle-description {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.config-container .toggle-group .toggle-text-before {
+    font-size: 16px;
+    color: #dddddd;
+    font-weight: bold;
+    padding: 0 8px; 
+}
+
+.config-container .toggle-group .toggle-text-after {
+    font-size: 16px;
+    color: #4bd865;
+    font-weight: bold;
+    padding: 0 8px; 
 }
 
 .config-container .toggle-group .toggle-button {
