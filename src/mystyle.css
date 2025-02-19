@@ -211,34 +211,26 @@ button {
     border: 4px solid whitesmoke;
 }
 
-.config-container .set-config-group {
+.config-container .title-toggle-group {
     display: flex;
     flex-direction: row;
-    gap: 10px;
     width: 100%;
-    margin-left: 30px;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
 }
 
-.config-container .current-value-group {
-    display: flex;
-    width: 100%;
+.config-container .config-title {
+    font-size: 16px;
+    font-weight: bold;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 10px 0 10px 30px;
 }
 
 .config-container .toggle-group {
     display: flex;
     width: 100%;
-    margin-bottom: 10px;
     align-items: center;
     gap: 10px;
-}
-
-.config-container .toggle-group .toggle-description {
-    font-size: 16px;
-    font-weight: bold;
 }
 
 .config-container .toggle-group .toggle-text-before {
@@ -289,6 +281,28 @@ button {
 
 .config-container .toggle-group .toggle-button input {
     display: none;
+}
+
+.config-container .config-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.config-container .set-config-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-left: 30px;
+}
+
+.config-container .current-value {
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 10px 0 10px 30px;
+    min-width: 0;
 }
 
 .config-container input {

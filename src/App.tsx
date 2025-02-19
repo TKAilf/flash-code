@@ -208,8 +208,14 @@ function App() {
         setThreshold(event.target.value);
     };
 
-    const handleIntervalChange = (
+    const handleIntervalTextChange = (
         event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setInterval(event.target.value);
+    };
+
+    const handleIntervalSelectChange = (
+        event: React.ChangeEvent<HTMLSelectElement>
     ) => {
         setInterval(event.target.value);
     };
@@ -274,7 +280,8 @@ function App() {
                 handleSetThreshold={handleSetThreshold}
                 currentThreshold={currentThreshold}
                 interval={interval}
-                handleIntervalChange={handleIntervalChange}
+                handleIntervalTextChange={handleIntervalTextChange}
+                handleIntervalSelectChange={handleIntervalSelectChange}
                 handleSetInterval={handleSetInterval}
                 currentInterval={currentInterval}
             />
