@@ -43,110 +43,115 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     const toggleIntervalMode = () => setIsDetailedInterval((prev) => !prev);
 
     return (
-        <div className="config-container">
-            <div className="title-toggle-group">
-                <span className="config-title">1. Webhook URLの設定</span>
-            </div>
-            <div className="config-group">
-                <div className="set-config-group">
-                    <input
-                        type="text"
-                        value={webhookUrl}
-                        onChange={handleWebhookUrlChange}
-                        placeholder="Discord Webhook URLを入力"
-                    />
-                    <button onClick={handleSetWebhookUrl}>設定</button>
+        <div className="cover-config-container">
+            <div className="header-text">各種設定項目</div>
+            <div className="config-container">
+                <div className="title-toggle-group">
+                    <span className="config-title">1. Webhook URLの設定</span>
                 </div>
-                <div className="current-value">
-                    設定中のURL: {currentWebhookUrl}
-                </div>
-            </div>
-            <div className="title-toggle-group">
-                <span className="config-title">2. しきい値の設定</span>
-                <div className="toggle-group">
-                    <span className="toggle-text-before">簡易</span>
-                    <label className="toggle-button">
+                <div className="config-group">
+                    <div className="set-config-group">
                         <input
-                            type="checkbox"
-                            checked={isDetailedThreshold}
-                            onChange={toggleThresholdMode}
+                            type="text"
+                            value={webhookUrl}
+                            onChange={handleWebhookUrlChange}
+                            placeholder="Discord Webhook URLを入力"
                         />
-                    </label>
-                    <span className="toggle-text-after">詳細</span>
+                        <button onClick={handleSetWebhookUrl}>設定</button>
+                    </div>
+                    <div className="current-value">
+                        設定中のURL: {currentWebhookUrl}
+                    </div>
                 </div>
-            </div>
-            <div className="config-group">
-                <div className="set-config-group">
-                    {isDetailedThreshold ? (
-                        <input
-                            value={threshold}
-                            onChange={(e) =>
-                                handleThresholdTextChange(
-                                    e as unknown as React.ChangeEvent<HTMLInputElement>
-                                )
-                            }
-                            placeholder="しきい値を入力"
-                        />
-                    ) : (
-                        <div className="config-select">
-                            <select
+                <div className="title-toggle-group">
+                    <span className="config-title">2. しきい値の設定</span>
+                    <div className="toggle-group">
+                        <span className="toggle-text-before">簡易</span>
+                        <label className="toggle-button">
+                            <input
+                                type="checkbox"
+                                checked={isDetailedThreshold}
+                                onChange={toggleThresholdMode}
+                            />
+                        </label>
+                        <span className="toggle-text-after">詳細</span>
+                    </div>
+                </div>
+                <div className="config-group">
+                    <div className="set-config-group">
+                        {isDetailedThreshold ? (
+                            <input
                                 value={threshold}
-                                onChange={handleThresholdSelectChange}
-                            >
-                                <option value="0.75">高精度</option>
-                                <option value="0.50">自動（推奨）</option>
-                                <option value="0.25">低精度</option>
-                            </select>
-                        </div>
-                    )}
-                    <button onClick={handleSetThreshold}>設定</button>
+                                onChange={(e) =>
+                                    handleThresholdTextChange(
+                                        e as unknown as React.ChangeEvent<HTMLInputElement>
+                                    )
+                                }
+                                placeholder="しきい値を入力"
+                            />
+                        ) : (
+                            <div className="config-select">
+                                <select
+                                    value={threshold}
+                                    onChange={handleThresholdSelectChange}
+                                >
+                                    <option value="0.75">高精度</option>
+                                    <option value="0.50">自動（推奨）</option>
+                                    <option value="0.25">低精度</option>
+                                </select>
+                            </div>
+                        )}
+                        <button onClick={handleSetThreshold}>設定</button>
+                    </div>
+                    <div className="current-value">
+                        設定中のしきい値: {currentThreshold}
+                    </div>
                 </div>
-                <div className="current-value">
-                    設定中のしきい値: {currentThreshold}
+                <div className="title-toggle-group">
+                    <span className="config-title">
+                        3. 監視間隔（ms）の設定
+                    </span>
+                    <div className="toggle-group">
+                        <span className="toggle-text-before">簡易</span>
+                        <label className="toggle-button">
+                            <input
+                                type="checkbox"
+                                checked={isDetailedInterval}
+                                onChange={toggleIntervalMode}
+                            />
+                        </label>
+                        <span className="toggle-text-after">詳細</span>
+                    </div>
                 </div>
-            </div>
-            <div className="title-toggle-group">
-                <span className="config-title">3. 監視間隔（ms）の設定</span>
-                <div className="toggle-group">
-                    <span className="toggle-text-before">簡易</span>
-                    <label className="toggle-button">
-                        <input
-                            type="checkbox"
-                            checked={isDetailedInterval}
-                            onChange={toggleIntervalMode}
-                        />
-                    </label>
-                    <span className="toggle-text-after">詳細</span>
-                </div>
-            </div>
-            <div className="config-group">
-                <div className="set-config-group">
-                    {isDetailedInterval ? (
-                        <input
-                            value={interval}
-                            onChange={(e) =>
-                                handleIntervalTextChange(
-                                    e as unknown as React.ChangeEvent<HTMLInputElement>
-                                )
-                            }
-                            placeholder="監視間隔（ms）を入力"
-                        />
-                    ) : (
-                        <div className="config-select">
-                            <select
+                <div className="config-group">
+                    <div className="set-config-group">
+                        {isDetailedInterval ? (
+                            <input
                                 value={interval}
-                                onChange={handleIntervalSelectChange}
-                            >
-                                <option value="1000">高速（高負荷）</option>
-                                <option value="3000">自動（推奨）</option>
-                                <option value="5000">低速（低負荷）</option>
-                            </select>
-                        </div>
-                    )}
-                    <button onClick={handleSetInterval}>設定</button>
-                </div>
-                <div className="current-value">
-                    設定中の監視間隔（ms）: {currentInterval}
+                                onChange={(e) =>
+                                    handleIntervalTextChange(
+                                        e as unknown as React.ChangeEvent<HTMLInputElement>
+                                    )
+                                }
+                                placeholder="監視間隔（ms）を入力"
+                            />
+                        ) : (
+                            <div className="config-select">
+                                <select
+                                    value={interval}
+                                    onChange={handleIntervalSelectChange}
+                                >
+                                    <option value="1000">高速（高負荷）</option>
+                                    <option value="3000">自動（推奨）</option>
+                                    <option value="5000">低速（低負荷）</option>
+                                </select>
+                            </div>
+                        )}
+                        <button onClick={handleSetInterval}>設定</button>
+                    </div>
+                    <div className="current-value">
+                        設定中の監視間隔（ms）: {currentInterval}
+                    </div>
                 </div>
             </div>
         </div>

@@ -249,10 +249,10 @@ function App() {
 
     return (
         <div className="container">
-            <h1>タスクバーの監視対象を選択</h1>
-            <div className="list-container row">
+            <h1>アプリのビジュアル監視</h1>
+            <div className="list-container">
                 <ListSection
-                    title="監視可能なタスク"
+                    title="監視可能"
                     items={availableItems}
                     selectedItem={selectedAvailableItem}
                     onItemClick={handleAvailableItemClick}
@@ -263,7 +263,7 @@ function App() {
                     onrefreshClick={refresh_list}
                 />
                 <ListSection
-                    title="監視対象とするタスク"
+                    title="監視対象"
                     items={monitoredItems}
                     selectedItem={selectedMonitoredItem}
                     onItemClick={handleMonitoredItemClick}

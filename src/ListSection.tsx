@@ -17,7 +17,7 @@ const ListSection: React.FC<ListSectionProps> = ({
 }) => {
     return (
         <div className="list-section">
-            <div className="list-header">{title}</div>
+            <div className="header-text">{title}</div>
             <ul className="list-view scroll-box">
                 {items.map((item, index) => (
                     <ListItem
