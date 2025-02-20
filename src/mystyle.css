@@ -156,7 +156,7 @@ button {
 }
 
 .button-monitor-all:hover {
-    background-color: #45a049;
+    background-color: #4caf50;
 }
 
 .button-monitor {
@@ -193,7 +193,7 @@ button {
 }
 
 .button-confirm:hover {
-    background-color: #45a049;
+    background-color: #4caf50;
 }
 
 .button-cancel:hover {
@@ -237,14 +237,14 @@ button {
     font-size: 16px;
     color: #dddddd;
     font-weight: bold;
-    padding: 0 8px; 
+    padding: 0 8px;
 }
 
 .config-container .toggle-group .toggle-text-after {
     font-size: 16px;
-    color: #4bd865;
+    color: #4caf50;
     font-weight: bold;
-    padding: 0 8px; 
+    padding: 0 8px;
 }
 
 .config-container .toggle-group .toggle-button {
@@ -255,11 +255,11 @@ button {
     border-radius: 50px;
     background-color: #dddddd;
     cursor: pointer;
-    transition: background-color .4s;
+    transition: background-color 0.4s;
 }
 
 .config-container .toggle-group .toggle-button:has(:checked) {
-    background-color: #4bd865;
+    background-color: #4caf50;
 }
 
 .config-container .toggle-group .toggle-button::after {
@@ -271,8 +271,8 @@ button {
     border-radius: 50%;
     box-shadow: 0 0 5px rgb(0 0 0 / 20%);
     background-color: #fff;
-    content: '';
-    transition: left .4s;
+    content: "";
+    transition: left 0.4s;
 }
 
 .config-container .toggle-group .toggle-button:has(:checked)::after {
@@ -294,6 +294,58 @@ button {
     flex-direction: row;
     gap: 10px;
     margin-left: 30px;
+}
+
+.config-container .config-select {
+    position: relative;
+}
+
+.config-container .config-select::before,
+.config-container .config-select::after {
+    position: absolute;
+    content: "";
+    pointer-events: none;
+}
+
+.config-container .config-select::before {
+    right: 0;
+    display: inline-block;
+    width: 2.8em;
+    height: 2.8em;
+    border-radius: 0 3px 3px 0;
+    background-color: #ccc;
+    content: "";
+}
+
+.config-container .config-select::after {
+    position: absolute;
+    top: 50%;
+    right: 1.4em;
+    transform: translate(50%, -50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-bottom: 3px solid #0f0f0f98;
+    border-right: 3px solid #0f0f0f98;
+    content: "";
+}
+
+.config-container .config-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    min-width: 230px;
+    height: 2.8em;
+    padding: 0.4em 3.6em 0.4em 0.8em;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #0f0f0f98;
+    color: #f6f6f6;
+}
+
+.config-container .config-select select:focus {
+    outline: 1px solid #ccc;
 }
 
 .config-container .current-value {
@@ -327,7 +379,7 @@ button {
 }
 
 .config-container button:hover {
-    background-color: #45a049;
+    background-color: #4caf50;
 }
 
 @media screen and (max-width: 768px) {

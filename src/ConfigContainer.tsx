@@ -88,14 +88,16 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                             placeholder="しきい値を入力"
                         />
                     ) : (
-                        <select
-                            value={threshold}
-                            onChange={handleThresholdSelectChange}
-                        >
-                            <option value="0.75">高精度</option>
-                            <option value="0.50">自動（推奨）</option>
-                            <option value="0.25">低精度</option>
-                        </select>
+                        <div className="config-select">
+                            <select
+                                value={threshold}
+                                onChange={handleThresholdSelectChange}
+                            >
+                                <option value="0.75">高精度</option>
+                                <option value="0.50">自動（推奨）</option>
+                                <option value="0.25">低精度</option>
+                            </select>
+                        </div>
                     )}
                     <button onClick={handleSetThreshold}>設定</button>
                 </div>
@@ -130,18 +132,16 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                             placeholder="監視間隔（ms）を入力"
                         />
                     ) : (
-                        <select
-                            value={interval}
-                            onChange={handleIntervalSelectChange}
-                        >
-                            <option value="1000">
-                                高速（高負荷）
-                            </option>
-                            <option value="3000">自動（推奨）</option>
-                            <option value="5000">
-                                低速（低負荷）
-                            </option>
-                        </select>
+                        <div className="config-select">
+                            <select
+                                value={interval}
+                                onChange={handleIntervalSelectChange}
+                            >
+                                <option value="1000">高速（高負荷）</option>
+                                <option value="3000">自動（推奨）</option>
+                                <option value="5000">低速（低負荷）</option>
+                            </select>
+                        </div>
                     )}
                     <button onClick={handleSetInterval}>設定</button>
                 </div>
