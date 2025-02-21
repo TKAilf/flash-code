@@ -8,7 +8,7 @@ import PrimaryActionButtons from "./PrimaryActionButtons";
 import { AppInfo } from "./types";
 import { ConfigContainer } from "./ConfigContainer";
 import "./App.css";
-import "./mystyle.css";
+import "./MyStyle.css";
 
 function App() {
     const [availableItems, setAvailableItems] = useState<AppInfo[]>([]);
@@ -249,7 +249,7 @@ function App() {
 
     return (
         <div className="container">
-            <h1>アプリのビジュアル監視</h1>
+            <h1>タスクバー状態監視</h1>
             <div className="list-container">
                 <ListSection
                     title="監視可能"
