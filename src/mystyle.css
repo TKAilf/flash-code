@@ -1,16 +1,34 @@
+.page {
+    margin: 0 40px;
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.h1 {
+    font-size: 3em;
+    font-weight: bold;
+    text-align: center;
+}
+
 .list-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
     margin: 20px;
+    padding: 20px;
 }
 
 .list-section {
     flex: 1;
     min-width: 220px;
-    max-width: 500px;
     background-color: #3a3a3a;
     border-radius: 8px;
+}
+
+.list-section:hover {
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 0 15px 5px whitesmoke;
 }
 
 .list-view {
@@ -23,13 +41,8 @@
     border-bottom-left-radius: 8px;
     overflow-y: auto;
     background-color: #3a3a3a;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     color: #ecf0f1;
-}
-
-.list-view:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .list-view li {
@@ -101,12 +114,18 @@
     border-top: 4px solid whitesmoke;
     border-left: 4px solid whitesmoke;
     border-right: 4px solid whitesmoke;
+    background-color: #3a3a3a;
 }
 
 input,
 button {
     padding: 0px;
     padding-top: 7px;
+}
+
+input:hover,input:focus,button:hover,button:focus {
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 0 15px 5px whitesmoke;
 }
 
 .button-move-container {
@@ -139,6 +158,7 @@ button {
     gap: 10px;
     margin: 20px;
     flex-wrap: wrap;
+    padding: 20px;
 }
 
 .primary-action-button {
@@ -190,7 +210,7 @@ button {
     transform: scale(1.05);
 }
 
-.button-move-container .moveButton:hover {
+.button-move-container .moveButton:hover,.moveButton:focus {
     background-color: #bdc3c7;
     transform: scale(1.05);
 }
@@ -204,8 +224,13 @@ button {
 }
 
 .cover-config-container {
-    background-color: #3a3a3a;
     margin: 20px;
+    padding: 20px;
+}
+
+.hover-config-container:hover {
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 0 15px 5px whitesmoke;
     border-radius: 8px;
 }
 
@@ -310,6 +335,12 @@ button {
     position: relative;
 }
 
+.config-container select:hover,select:focus {
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 0 15px 5px whitesmoke;
+    border-radius: 8px;
+}
+
 .config-container .config-select::before,
 .config-container .config-select::after {
     position: absolute;
@@ -386,7 +417,6 @@ button {
     cursor: pointer;
     background-color: #4caf50;
     color: white;
-    transition: background-color 0.3s;
 }
 
 .config-container button:hover {
@@ -399,6 +429,7 @@ button {
     justify-content: center;
     gap: 120px;
     margin: 20px;
+    padding: 20px;
 }
 
 .icon-container {
