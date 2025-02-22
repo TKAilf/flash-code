@@ -9,6 +9,7 @@ import { AppInfo } from "./types";
 import { ConfigContainer } from "./ConfigContainer";
 import "./App.css";
 import "./MyStyle.css";
+import EyeAnimation from "./EyeAnimation";
 
 function App() {
     const [availableItems, setAvailableItems] = useState<AppInfo[]>([]);
@@ -27,6 +28,7 @@ function App() {
     const [currentWebhookUrl, setCurrentWebhookUrl] = useState<string>("");
     const [currentThreshold, setCurrentThreshold] = useState<string>("");
     const [currentInterval, setCurrentInterval] = useState<string>("");
+    const [isMonitoring, setIsMonitoring] = useState(false);
 
     useEffect(() => {
         attachConsole();
@@ -69,6 +71,7 @@ function App() {
             );
             if (!confirmed) return;
             await invoke("stop_monitoring");
+            setIsMonitoring(false);
             setMonitoredItems([]);
             fetchWindows();
         } catch (e) {
@@ -145,6 +148,7 @@ function App() {
         try {
             await invoke("start_monitoring", { apps });
             await dialog.message("監視を開始しました", { title: "監視開始" });
+            setIsMonitoring(true);
         } catch (e) {
             error(`start_monitoring呼び出しでエラーが起きました: ${e}`);
         }
@@ -176,6 +180,7 @@ function App() {
         try {
             await invoke("stop_monitoring");
             await dialog.message("監視を停止しました", { title: "監視停止" });
+            setIsMonitoring(false);
         } catch (e) {
             error(`stop_monitoring呼び出しでエラーが起きました: ${e}`);
         }
@@ -184,6 +189,7 @@ function App() {
     const handleClose = async () => {
         try {
             await invoke("stop_monitoring");
+            setIsMonitoring(false);
             window.close();
         } catch (e) {
             error(`close呼び出しでエラーが起きました: ${e}`);
@@ -252,7 +258,7 @@ function App() {
             <h1>タスクバー状態監視</h1>
             <div className="list-container">
                 <ListSection
-                    title="監視可能"
+                    title="監視元"
                     items={availableItems}
                     selectedItem={selectedAvailableItem}
                     onItemClick={handleAvailableItemClick}
@@ -285,6 +291,7 @@ function App() {
                 handleSetInterval={handleSetInterval}
                 currentInterval={currentInterval}
             />
+            <EyeAnimation isMonitoring={isMonitoring} />
             <PrimaryActionButtons
                 onMonitorAll={handleMonitorAll}
                 onMonitor={handleMonitor}
