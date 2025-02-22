@@ -7,7 +7,7 @@ interface PrimaryActionButtonsProps {
     onClose: () => void;
 }
 
-const PrimaryActionButtons: React.FC<PrimaryActionButtonsProps> = ({
+export const PrimaryActionButtons: React.FC<PrimaryActionButtonsProps> = ({
     onMonitorAll,
     onMonitor,
     onStopMonitoring,
@@ -42,5 +42,3 @@ const PrimaryActionButtons: React.FC<PrimaryActionButtonsProps> = ({
         </div>
     );
 };
-
-export default PrimaryActionButtons;

@@ -8,7 +8,7 @@ interface ListItemProps {
     onClick: () => void;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ item, isSelected, onClick }) => {
+export const ListItem: React.FC<ListItemProps> = ({ item, isSelected, onClick }) => {
     return (
         <li
             className={`scroll-box ${isSelected ? "selected" : ""}`}
@@ -28,5 +28,3 @@ const ListItem: React.FC<ListItemProps> = ({ item, isSelected, onClick }) => {
         </li>
     );
 };
-
-export default ListItem;

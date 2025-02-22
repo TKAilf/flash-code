@@ -1,11 +1,11 @@
 import React from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-interface EyeIndicatorProps {
+interface EyeAnimationProps {
     isMonitoring: boolean;
 };
 
-const EyeIndicator: React.FC<EyeIndicatorProps> = ({ isMonitoring }) => {
+export const EyeAnimation: React.FC<EyeAnimationProps> = ({ isMonitoring }) => {
     const containerClass = isMonitoring ? "monitoring" : "not-monitoring";
 
     return (
@@ -20,5 +20,3 @@ const EyeIndicator: React.FC<EyeIndicatorProps> = ({ isMonitoring }) => {
         </div>
     );
 };
-
-export default EyeIndicator;

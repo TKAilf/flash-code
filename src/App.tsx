@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { info, error, attachConsole } from "tauri-plugin-log-api";
 import { dialog } from "@tauri-apps/api";
-import ListSection from "./ListSection";
-import MoveButtons from "./MoveButtons";
-import PrimaryActionButtons from "./PrimaryActionButtons";
-import { AppInfo } from "./types";
 import { ConfigContainer } from "./ConfigContainer";
+import { EyeAnimation } from "./EyeAnimation";
+import { ListSection } from "./ListSection";
+import { MoveButtons } from "./MoveButtons";
+import { PrimaryActionButtons } from "./PrimaryActionButtons";
+import { AppInfo } from "./types";
 import "./App.css";
 import "./MyStyle.css";
-import EyeAnimation from "./EyeAnimation";
 
 function App() {
     const [availableItems, setAvailableItems] = useState<AppInfo[]>([]);

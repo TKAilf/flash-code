@@ -1,5 +1,5 @@
 import React from "react";
-import ListItem from "./ListItem";
+import { ListItem } from "./ListItem";
 import { AppInfo } from "./types";
 
 interface ListSectionProps {
@@ -9,7 +9,7 @@ interface ListSectionProps {
     onItemClick: (item: AppInfo, index: number) => void;
 }
 
-const ListSection: React.FC<ListSectionProps> = ({
+export const ListSection: React.FC<ListSectionProps> = ({
     title,
     items,
     selectedItem,
@@ -31,5 +31,3 @@ const ListSection: React.FC<ListSectionProps> = ({
         </div>
     );
 };
-
-export default ListSection;

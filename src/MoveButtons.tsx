@@ -7,7 +7,7 @@ interface MoveButtonsProps {
     onrefreshClick: () => void;
 }
 
-const MoveButtons: React.FC<MoveButtonsProps> = ({
+export const MoveButtons: React.FC<MoveButtonsProps> = ({
     onAddClick,
     onRemoveClick,
     onrefreshClick,
@@ -38,5 +38,3 @@ const MoveButtons: React.FC<MoveButtonsProps> = ({
         </div>
     );
 };
-
-export default MoveButtons;
