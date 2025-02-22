@@ -2,7 +2,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    padding: 20px;
+    margin: 20px;
 }
 
 .list-section {
@@ -159,7 +159,7 @@ button {
 }
 
 .button-monitor-all:hover {
-    background-color: #4caf50;
+    background-color: #337635;
 }
 
 .button-monitor {
@@ -175,7 +175,7 @@ button {
 }
 
 .button-stop-monitoring:hover {
-    background-color: #e53935;
+    background-color: #aa2b28;
 }
 
 .button-close {
@@ -390,7 +390,7 @@ button {
 }
 
 .config-container button:hover {
-    background-color: #4caf50;
+    background-color: #337635;
 }
 
 .eye-indicator {
@@ -398,7 +398,7 @@ button {
     align-items: center;
     justify-content: center;
     gap: 120px;
-    margin-bottom: 20px;
+    margin: 20px;
 }
 
 .icon-container {
@@ -418,7 +418,7 @@ button {
 
 .eye-indicator.monitoring .icon-container .fa-eye {
     opacity: 1;
-    color: #4caf50;
+    color: #86c2fd;
 }
 
 .eye-indicator .icon-container .fa-eye-slash {
@@ -427,13 +427,20 @@ button {
 
 .eye-indicator.not-monitoring .icon-container .fa-eye-slash {
     opacity: 1;
-    color: #dddddd;
+    color: #e53935;
 }
 
 .eye-indicator .indicator-text {
     font-size: 90px;
-    color: #dddddd;
     white-space: nowrap;
+}
+
+.eye-indicator.monitoring .indicator-text {
+    color: #86c2fd;
+}
+
+.eye-indicator.not-monitoring .indicator-text {
+    color: #e53935;
 }
 
 @media screen and (max-width: 768px) {
