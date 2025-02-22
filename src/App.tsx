@@ -255,49 +255,51 @@ function App() {
 
     return (
         <div className="container">
-            <h1>タスクバー状態監視</h1>
-            <div className="list-container">
-                <ListSection
-                    title="監視元"
-                    items={availableItems}
-                    selectedItem={selectedAvailableItem}
-                    onItemClick={handleAvailableItemClick}
+            <div className="page">
+                <h1 className="h1">タスクバー状態監視</h1>
+                <div className="list-container">
+                    <ListSection
+                        title="監視元"
+                        items={availableItems}
+                        selectedItem={selectedAvailableItem}
+                        onItemClick={handleAvailableItemClick}
+                    />
+                    <MoveButtons
+                        onAddClick={moveToMonitored}
+                        onRemoveClick={moveToAvailable}
+                        onrefreshClick={refresh_list}
+                    />
+                    <ListSection
+                        title="監視対象"
+                        items={monitoredItems}
+                        selectedItem={selectedMonitoredItem}
+                        onItemClick={handleMonitoredItemClick}
+                    />
+                </div>
+                <ConfigContainer
+                    webhookUrl={webhookUrl}
+                    handleWebhookUrlChange={handleWebhookUrlChange}
+                    handleSetWebhookUrl={handleSetWebhookUrl}
+                    currentWebhookUrl={currentWebhookUrl}
+                    threshold={threshold}
+                    handleThresholdTextChange={handleThresholdTextChange}
+                    handleThresholdSelectChange={handleThresholdSelectChange}
+                    handleSetThreshold={handleSetThreshold}
+                    currentThreshold={currentThreshold}
+                    interval={interval}
+                    handleIntervalTextChange={handleIntervalTextChange}
+                    handleIntervalSelectChange={handleIntervalSelectChange}
+                    handleSetInterval={handleSetInterval}
+                    currentInterval={currentInterval}
                 />
-                <MoveButtons
-                    onAddClick={moveToMonitored}
-                    onRemoveClick={moveToAvailable}
-                    onrefreshClick={refresh_list}
-                />
-                <ListSection
-                    title="監視対象"
-                    items={monitoredItems}
-                    selectedItem={selectedMonitoredItem}
-                    onItemClick={handleMonitoredItemClick}
+                <EyeAnimation isMonitoring={isMonitoring} />
+                <PrimaryActionButtons
+                    onMonitorAll={handleMonitorAll}
+                    onMonitor={handleMonitor}
+                    onStopMonitoring={handleStopMonitoring}
+                    onClose={handleClose}
                 />
             </div>
-            <ConfigContainer
-                webhookUrl={webhookUrl}
-                handleWebhookUrlChange={handleWebhookUrlChange}
-                handleSetWebhookUrl={handleSetWebhookUrl}
-                currentWebhookUrl={currentWebhookUrl}
-                threshold={threshold}
-                handleThresholdTextChange={handleThresholdTextChange}
-                handleThresholdSelectChange={handleThresholdSelectChange}
-                handleSetThreshold={handleSetThreshold}
-                currentThreshold={currentThreshold}
-                interval={interval}
-                handleIntervalTextChange={handleIntervalTextChange}
-                handleIntervalSelectChange={handleIntervalSelectChange}
-                handleSetInterval={handleSetInterval}
-                currentInterval={currentInterval}
-            />
-            <EyeAnimation isMonitoring={isMonitoring} />
-            <PrimaryActionButtons
-                onMonitorAll={handleMonitorAll}
-                onMonitor={handleMonitor}
-                onStopMonitoring={handleStopMonitoring}
-                onClose={handleClose}
-            />
         </div>
     );
 }

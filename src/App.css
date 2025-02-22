@@ -22,9 +22,6 @@
 }
 
 .container {
-    margin: 0;
-    padding-top: 10vh;
-    padding-bottom: 10vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -33,22 +30,6 @@
     background-size: cover;
     background-position: center;
     position: relative;
-}
-
-.container::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.4); /* 半透明の黒 */
-    z-index: 1;
-}
-
-.container > * {
-    position: relative;
-    z-index: 2;
 }
 
 .logo {
