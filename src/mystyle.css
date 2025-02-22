@@ -9,24 +9,23 @@
     flex: 1;
     min-width: 220px;
     max-width: 500px;
+    background-color: #3a3a3a;
+    border-radius: 8px;
 }
 
 .list-view {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    width: 100%;
     height: 320px;
     border: 4px solid whitesmoke;
-    /* ダークグレーのボーダー */
-    border-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
     overflow-y: auto;
     background-color: #3a3a3a;
-    /* 少し明るいダークグレーの背景色 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     color: #ecf0f1;
-    /* 明るい文字色 */
 }
 
 .list-view:hover {
@@ -46,11 +45,10 @@
 
 .list-view li:hover {
     background-color: #3b4a59;
-    /* 少し明るいダークグレー */
 }
 
 .list-view li.selected {
-    background-color: #555; /* 選択された項目の背景色 */
+    background-color: #555;
 }
 
 .list-view li:last-child {
@@ -96,8 +94,13 @@
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 10px;
+    padding: 10px;
     color: #ecf0f1;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top: 4px solid whitesmoke;
+    border-left: 4px solid whitesmoke;
+    border-right: 4px solid whitesmoke;
 }
 
 input,
@@ -113,7 +116,7 @@ button {
     align-items: center;
     gap: 10px;
     flex: 0 0 auto;
-    margin: 0 10px 0 20px;
+    margin: 0 20px;
 }
 
 .button-move-container .moveButton {
@@ -146,13 +149,13 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
-    flex: 1 1 40%; /* ボタンが横に並ぶように調整 */
+    flex: 1 1 40%;
     max-width: 200px;
     color: white;
 }
 
 .button-monitor-all {
-    background-color: #4caf50; /* 緑色 */
+    background-color: #4caf50;
 }
 
 .button-monitor-all:hover {
@@ -160,7 +163,7 @@ button {
 }
 
 .button-monitor {
-    background-color: #2196f3; /* 青色 */
+    background-color: #2196f3;
 }
 
 .button-monitor:hover {
@@ -168,7 +171,7 @@ button {
 }
 
 .button-stop-monitoring {
-    background-color: #f44336; /* 赤色 */
+    background-color: #f44336;
 }
 
 .button-stop-monitoring:hover {
@@ -176,7 +179,7 @@ button {
 }
 
 .button-close {
-    background-color: #9e9e9e; /* グレー */
+    background-color: #9e9e9e;
 }
 
 .button-close:hover {
@@ -201,7 +204,9 @@ button {
 }
 
 .cover-config-container {
-    padding: 20px;
+    background-color: #3a3a3a;
+    margin: 20px;
+    border-radius: 8px;
 }
 
 .config-container {
@@ -212,6 +217,8 @@ button {
     padding: 20px 30px;
     background-color: #3a3a3a;
     border: 4px solid whitesmoke;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 .config-container .title-toggle-group {
@@ -377,13 +384,56 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #4caf50; /* 緑色 */
+    background-color: #4caf50;
     color: white;
     transition: background-color 0.3s;
 }
 
 .config-container button:hover {
     background-color: #4caf50;
+}
+
+.eye-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 120px;
+    margin-bottom: 20px;
+}
+
+.icon-container {
+    position: relative;
+    height: 90px;
+}
+
+.icon-container i {
+    font-size: 90px;
+    transition: opacity 0.5s ease;
+    position: absolute;
+}
+
+.eye-indicator .icon-container .fa-eye {
+    opacity: 0;
+}
+
+.eye-indicator.monitoring .icon-container .fa-eye {
+    opacity: 1;
+    color: #4caf50;
+}
+
+.eye-indicator .icon-container .fa-eye-slash {
+    opacity: 0;
+}
+
+.eye-indicator.not-monitoring .icon-container .fa-eye-slash {
+    opacity: 1;
+    color: #dddddd;
+}
+
+.eye-indicator .indicator-text {
+    font-size: 90px;
+    color: #dddddd;
+    white-space: nowrap;
 }
 
 @media screen and (max-width: 768px) {
@@ -413,7 +463,7 @@ button {
     .cover-config-container {
         margin: auto;
         max-width: 500px;
-        padding: 20px
+        padding: 20px;
     }
 
     .primary-button-container {
