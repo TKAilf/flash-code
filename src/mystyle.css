@@ -450,6 +450,7 @@ input:hover,input:focus,button:hover,button:focus {
 .eye-indicator.monitoring .icon-container .fa-eye {
     opacity: 1;
     color: #86c2fd;
+    text-shadow: 0 0px 8px #2491fc;
 }
 
 .eye-indicator .icon-container .fa-eye-slash {
@@ -468,6 +469,7 @@ input:hover,input:focus,button:hover,button:focus {
 
 .eye-indicator.monitoring .indicator-text {
     color: #86c2fd;
+    text-shadow: 0 0px 8px #2491fc;
 }
 
 .eye-indicator.not-monitoring .indicator-text {
