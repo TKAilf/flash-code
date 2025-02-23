@@ -28,7 +28,7 @@
 
 .list-section:hover {
     transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 15px 5px whitesmoke;
+    box-shadow: 0 0 5px 1px whitesmoke;
 }
 
 .list-view {
@@ -125,7 +125,7 @@ button {
 
 input:hover,input:focus,button:hover,button:focus {
     transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 15px 5px whitesmoke;
+    box-shadow: 0 0 5px 1px whitesmoke;
 }
 
 .button-move-container {
@@ -230,7 +230,7 @@ input:hover,input:focus,button:hover,button:focus {
 
 .hover-config-container:hover {
     transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 15px 5px whitesmoke;
+    box-shadow: 0 0 5px 1px whitesmoke;
     border-radius: 8px;
 }
 
@@ -253,6 +253,10 @@ input:hover,input:focus,button:hover,button:focus {
     align-items: center;
     margin-bottom: 10px;
     gap: 10px;
+}
+
+.config-container .title-toggle-group label:hover {
+    box-shadow: 0 0 5px 1px whitesmoke;
 }
 
 .config-container .config-title {
@@ -337,7 +341,7 @@ input:hover,input:focus,button:hover,button:focus {
 
 .config-container select:hover,select:focus {
     transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 15px 5px whitesmoke;
+    box-shadow: 0 0 5px 1px whitesmoke;
     border-radius: 8px;
 }
 
@@ -421,6 +425,7 @@ input:hover,input:focus,button:hover,button:focus {
 
 .config-container button:hover {
     background-color: #337635;
+    transition: background-color 0.5s ease;
 }
 
 .eye-indicator {
