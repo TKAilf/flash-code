@@ -147,7 +147,6 @@ function App() {
     const startMonitoring = async (apps: AppInfo[]) => {
         try {
             await invoke("start_monitoring", { apps });
-            await dialog.message("監視を開始しました", { title: "監視開始" });
             setIsMonitoring(true);
         } catch (e) {
             error(`start_monitoring呼び出しでエラーが起きました: ${e}`);
@@ -179,7 +178,6 @@ function App() {
     const handleStopMonitoring = async () => {
         try {
             await invoke("stop_monitoring");
-            await dialog.message("監視を停止しました", { title: "監視停止" });
             setIsMonitoring(false);
         } catch (e) {
             error(`stop_monitoring呼び出しでエラーが起きました: ${e}`);
