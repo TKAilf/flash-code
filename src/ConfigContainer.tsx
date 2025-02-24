@@ -98,11 +98,11 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                         value={threshold}
                                         onChange={handleThresholdSelectChange}
                                     >
-                                        <option value="0.75">高精度</option>
-                                        <option value="0.50">
+                                        <option value="0.020">高精度</option>
+                                        <option value="0.050">
                                             自動（推奨）
                                         </option>
-                                        <option value="0.25">低精度</option>
+                                        <option value="0.100">低精度</option>
                                     </select>
                                 </div>
                             )}

@@ -79,12 +79,13 @@ impl MonitorState {
         interval: u64,
         threshold: f32,
         config_state: State<'a, ConfigState>,
+        app_handle: tauri::AppHandle,
     ) {
         info!("monitor_targetを呼び出しました。");
         let app_name = app_info.name.clone();
         let config_path = config_state.path.clone();
         let handle = tauri::async_runtime::spawn(async move {
-            monitor_app_icon(app_info, interval, threshold, config_path).await;
+            monitor_app_icon(app_info, interval, threshold, config_path, app_handle).await;
         });
         self.tasks.lock().await.insert(app_name, handle);
     }

@@ -12,6 +12,7 @@ use crate::window_utils::{AppInfo, ConfigState, MonitorState};
 /// # 引数
 /// * `monitor_state` - `MonitorState`の状態。監視の管理に使用されます。
 /// * `config_state` - `ConfigState`の状態。アプリケーションの設定を提供します。
+/// * `app_handle` - Tauriの`AppHandle`。
 /// * `apps` - 監視対象のアプリケーション情報のリスト。
 ///
 /// # 使用例
@@ -23,6 +24,7 @@ use crate::window_utils::{AppInfo, ConfigState, MonitorState};
 /// async fn start_monitoring_example(
 ///     monitor_state: State<'_, MonitorState>,
 ///     config_state: State<'_, ConfigState>,
+///     app_handle: tauri::AppHandle,
 ///     apps: Vec<AppInfo>,
 /// ) {
 ///     start_monitoring(monitor_state, config_state, apps).await.unwrap();
@@ -33,6 +35,7 @@ use crate::window_utils::{AppInfo, ConfigState, MonitorState};
 pub async fn start_monitoring(
     monitor_state: State<'_, MonitorState>,
     config_state: State<'_, ConfigState>,
+    app_handle: tauri::AppHandle,
     apps: Vec<AppInfo>,
 ) -> Result<(), String> {
     info!("start_monitoringを呼び出しました。");
@@ -67,7 +70,13 @@ pub async fn start_monitoring(
             }
         };
         monitor_state
-            .monitor_target(app, interval, threshold, config_state.clone())
+            .monitor_target(
+                app,
+                interval,
+                threshold,
+                config_state.clone(),
+                app_handle.clone(),
+            )
             .await;
     }
     Ok(())

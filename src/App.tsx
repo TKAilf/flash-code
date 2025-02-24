@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { info, error, attachConsole } from "tauri-plugin-log-api";
 import { dialog } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
 import { ConfigContainer } from "./ConfigContainer";
 import { EyeAnimation } from "./EyeAnimation";
 import { ListSection } from "./ListSection";
@@ -62,6 +63,16 @@ function App() {
             error(`get_config呼び出しでエラーが発生しました: ${e}`);
         }
     };
+
+    useEffect(() => {
+        const unlistenPromise = listen("monitoring_stopped", (_event) => {
+            info("monitoring_stopped イベントを受信しました。");
+            setIsMonitoring(false);
+        });
+        return () => {
+            unlistenPromise.then((unlisten) => unlisten());
+        };
+    }, []);
 
     const refresh_list = async () => {
         try {

@@ -5,6 +5,7 @@ use crate::{
 };
 use log::{error, info};
 use std::{path::PathBuf, time::Duration};
+use tauri::Manager;
 use tokio::time::sleep;
 use windows::Win32::Foundation::HWND;
 
@@ -19,6 +20,7 @@ use windows::Win32::Foundation::HWND;
 /// - `interval`: チェック間隔（ミリ秒）。
 /// - `threshold`: 画像比較のしきい値（`0.0〜1.0`）。
 /// - `config_path`: 通知送信に必要な設定ファイルのパス。
+/// - `app_handle`: Tauri の AppHandle。`emit_all` を用いて全ウィンドウへ "monitoring_stopped" イベントを発行するために利用。
 ///
 /// # 使用例
 /// ```rust
@@ -29,8 +31,11 @@ use windows::Win32::Foundation::HWND;
 /// let interval = 3000;
 /// let threshold = 0.050;
 /// let config_path = PathBuf::from("path/to/config.json");
+/// // Tauri 側で AppHandle を取得する必要があります。
+/// // ここでは仮に `app_handle` として取得したものを渡す例です。
+/// let app_handle = tauri::AppHandle::current();
 ///
-/// monitor_app_icon(app_info, interval, threshold, config_path).await;
+/// monitor_app_icon(app_info, interval, threshold, config_path, app_handle).await;
 /// ```
 ///
 pub async fn monitor_app_icon(
@@ -38,6 +43,7 @@ pub async fn monitor_app_icon(
     interval: u64,
     threshold: f32,
     config_path: PathBuf,
+    app_handle: tauri::AppHandle,
 ) {
     info!("monitor_app_iconを呼び出しました。");
     // 初期状態のアイコン画像を取得
@@ -69,6 +75,11 @@ pub async fn monitor_app_icon(
             info!("アイコンに変化がありました。");
             // 変化が検知された場合の処理
             send_discord_notification(&app_info.name, config_path).await;
+
+            match app_handle.emit_all("monitoring_stopped", ()) {
+                Ok(_) => info!("monitoring_stoppedイベントを送信しました。"),
+                Err(e) => error!("monitoring_stoppedイベントの送信に失敗しました: {:?}", e),
+            }
             break;
         }
         info!("アイコンに変化はありませんでした。");
