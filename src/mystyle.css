@@ -1,16 +1,74 @@
+:root {
+    /* カラーパレット */
+    --color-page-bg: rgba(0, 0, 0, 0.6);
+    --color-bg-dark: #3a3a3a;
+    --color-bg-light: #ecf0f1;
+    --color-text: #ecf0f1;
+    --color-text-dark: #2f2f2f;
+    --color-border: whitesmoke;
+    --color-hover: #3b4a59;
+    --color-selected: #555;
+
+    --color-green: #4caf50;
+    --color-green-hover: #337635;
+    --color-blue: #2196f3;
+    --color-blue-hover: #1976d2;
+    --color-red: #f44336;
+    --color-red-hover: #aa2b28;
+    --color-gray: #9e9e9e;
+    --color-gray-hover: #7e7e7e;
+
+    --color-scrollbar-track: #2c3e50;
+    --color-scrollbar-thumb: #555;
+
+    --color-blue-light: #86c2fd;
+    --color-blue-shadow: #2491fc;
+    --color-red-alt: #e53935;
+
+    --color-bg-select: #0f0f0f98;
+    --color-border-light: #ccc;
+    --color-toggle-bg: #dddddd;
+    --color-white: #fff;
+    --color-select-text: #f6f6f6;
+    --color-arrow: #0f0f0f98;
+    --color-button-move-hover: #bdc3c7;
+
+    /* フォント・サイズ・太さ */
+    --font-size-h1: 3em;
+    --font-size-header: 20px;
+    --font-size-button: 16px;
+    --font-weight-bold: bold;
+
+    /* トランジション */
+    --transition-fast: 0.3s ease;
+    --transition-medium: 0.4s ease;
+    --transition-slow: 0.5s ease;
+
+    /* ボーダー・ラディウス */
+    --border-radius-default: 8px;
+    --border-radius-small: 5px;
+    --border-radius-circle: 50%;
+
+    /* その他 */
+    --padding-input: 10px;
+}
+
+/* ページ全体 */
 .page {
     margin: 0 40px;
     padding-top: 10vh;
     padding-bottom: 10vh;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--color-page-bg);
 }
 
+/* 見出し */
 .h1 {
-    font-size: 3em;
-    font-weight: bold;
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-bold);
     text-align: center;
 }
 
+/* リストコンテナ */
 .list-container {
     display: flex;
     flex-wrap: wrap;
@@ -19,61 +77,58 @@
     padding: 20px;
 }
 
+/* リストセクション */
 .list-section {
     flex: 1;
     min-width: 220px;
-    background-color: #3a3a3a;
-    border-radius: 8px;
+    background-color: var(--color-bg-dark);
+    border-radius: var(--border-radius-default);
 }
-
 .list-section:hover {
-    transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 5px 1px whitesmoke;
+    transition: box-shadow var(--transition-slow);
+    box-shadow: 0 0 5px 1px var(--color-border);
 }
 
+/* リストビュー */
 .list-view {
     list-style-type: none;
     padding: 0;
     margin: 0;
     height: 320px;
-    border: 4px solid whitesmoke;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border: 4px solid var(--color-border);
+    border-bottom-right-radius: var(--border-radius-default);
+    border-bottom-left-radius: var(--border-radius-default);
     overflow-y: auto;
-    background-color: #3a3a3a;
-    transition: box-shadow 0.3s ease;
-    color: #ecf0f1;
+    background-color: var(--color-bg-dark);
+    transition: box-shadow var(--transition-fast);
+    color: var(--color-text);
 }
-
 .list-view li {
     display: flex;
     align-items: flex-start;
     padding: 12px 16px;
-    border-bottom: 1px solid whitesmoke;
-    transition: background-color 0.3s ease;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
     max-height: 100px;
     overflow: auto;
     cursor: pointer;
 }
-
 .list-view li:hover {
-    background-color: #3b4a59;
+    background-color: var(--color-hover);
 }
-
 .list-view li.selected {
-    background-color: #555;
+    background-color: var(--color-selected);
 }
-
 .list-view li:last-child {
     border-bottom: none;
 }
 
+/* ウィンドウアイコンとタイトル */
 .window-icon {
     width: 24px;
     height: 24px;
     margin-right: 10px;
 }
-
 .window-title {
     flex: 1;
     white-space: nowrap;
@@ -83,51 +138,54 @@
     padding-left: 6px;
 }
 
+/* スクロールボックス */
 .scroll-box {
     overflow: auto;
     scrollbar-width: thin;
-    scrollbar-color: #555 #2c3e50;
+    scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
 }
-
 .scroll-box::-webkit-scrollbar {
     width: 8px;
 }
-
 .scroll-box::-webkit-scrollbar-track {
-    background: #2c3e50;
+    background: var(--color-scrollbar-track);
 }
-
 .scroll-box::-webkit-scrollbar-thumb {
-    background-color: #555;
+    background-color: var(--color-scrollbar-thumb);
     border-radius: 4px;
-    border: 2px solid #2c3e50;
+    border: 2px solid var(--color-scrollbar-track);
 }
 
+/* ヘッダー */
 .header-text {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: var(--font-size-header);
+    font-weight: var(--font-weight-bold);
     text-align: center;
     padding: 10px;
-    color: #ecf0f1;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-top: 4px solid whitesmoke;
-    border-left: 4px solid whitesmoke;
-    border-right: 4px solid whitesmoke;
-    background-color: #3a3a3a;
+    color: var(--color-text);
+    border-top-left-radius: var(--border-radius-default);
+    border-top-right-radius: var(--border-radius-default);
+    border-top: 4px solid var(--color-border);
+    border-left: 4px solid var(--color-border);
+    border-right: 4px solid var(--color-border);
+    background-color: var(--color-bg-dark);
 }
 
+/* input, button 基本スタイル */
 input,
 button {
-    padding: 0px;
+    padding: 0;
     padding-top: 7px;
 }
-
-input:hover,input:focus,button:hover,button:focus {
-    transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 5px 1px whitesmoke;
+input:hover,
+input:focus,
+button:hover,
+button:focus {
+    transition: box-shadow var(--transition-slow);
+    box-shadow: 0 0 5px 1px var(--color-border);
 }
 
+/* ボタン移動コンテナ */
 .button-move-container {
     display: flex;
     flex-direction: column;
@@ -137,19 +195,25 @@ input:hover,input:focus,button:hover,button:focus {
     flex: 0 0 auto;
     margin: 0 20px;
 }
-
 .button-move-container .moveButton {
     width: 40px;
     height: 40px;
     border: none;
-    border-radius: 50%;
-    background-color: #ecf0f1;
-    color: #2f2f2f;
+    border-radius: var(--border-radius-circle);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-dark);
     font-size: 18px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s;
+    transition: background-color var(--transition-fast),
+        transform var(--transition-fast);
+}
+.button-move-container .moveButton:hover,
+.moveButton:focus {
+    background-color: var(--color-button-move-hover);
+    transform: scale(1.05);
 }
 
+/* プライマリーボタンコンテナ */
 .primary-button-container {
     display: flex;
     flex-direction: row;
@@ -160,92 +224,76 @@ input:hover,input:focus,button:hover,button:focus {
     flex-wrap: wrap;
     padding: 20px;
 }
-
 .primary-action-button {
     padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: var(--font-size-button);
+    font-weight: var(--font-weight-bold);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color var(--transition-fast),
+        transform var(--transition-fast);
     flex: 1 1 40%;
     max-width: 200px;
-    color: white;
+    color: var(--color-white);
 }
 
+/* 各種ボタン */
 .button-monitor-all {
-    background-color: #4caf50;
+    background-color: var(--color-green);
 }
-
 .button-monitor-all:hover {
-    background-color: #337635;
+    background-color: var(--color-green-hover);
 }
-
 .button-monitor {
-    background-color: #2196f3;
+    background-color: var(--color-blue);
 }
-
 .button-monitor:hover {
-    background-color: #1976d2;
+    background-color: var(--color-blue-hover);
 }
-
 .button-stop-monitoring {
-    background-color: #f44336;
+    background-color: var(--color-red);
 }
-
 .button-stop-monitoring:hover {
-    background-color: #aa2b28;
+    background-color: var(--color-red-hover);
 }
-
 .button-close {
-    background-color: #9e9e9e;
+    background-color: var(--color-gray);
 }
-
 .button-close:hover {
-    background-color: #7e7e7e;
+    background-color: var(--color-gray-hover);
 }
-
 .button:hover {
     transform: scale(1.05);
 }
-
-.button-move-container .moveButton:hover,.moveButton:focus {
-    background-color: #bdc3c7;
-    transform: scale(1.05);
-}
-
 .button-confirm:hover {
-    background-color: #4caf50;
+    background-color: var(--color-green);
 }
-
 .button-cancel:hover {
-    background-color: #e53935;
+    background-color: var(--color-red-alt);
 }
 
+/* コンフィグ関連 */
 .cover-config-container {
     margin: 20px;
     padding: 20px;
 }
-
 .hover-config-container:hover {
-    transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 5px 1px whitesmoke;
-    border-radius: 8px;
+    transition: box-shadow var(--transition-slow);
+    box-shadow: 0 0 5px 1px var(--color-border);
+    border-radius: var(--border-radius-default);
 }
-
 .config-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px 30px;
-    background-color: #3a3a3a;
-    border: 4px solid whitesmoke;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    background-color: var(--color-bg-dark);
+    border: 4px solid var(--color-border);
+    border-bottom-right-radius: var(--border-radius-default);
+    border-bottom-left-radius: var(--border-radius-default);
 }
-
 .config-container .title-toggle-group {
     display: flex;
     flex-direction: row;
@@ -254,53 +302,45 @@ input:hover,input:focus,button:hover,button:focus {
     margin-bottom: 10px;
     gap: 10px;
 }
-
 .config-container .title-toggle-group label:hover {
-    box-shadow: 0 0 5px 1px whitesmoke;
+    box-shadow: 0 0 5px 1px var(--color-border);
 }
-
 .config-container .config-title {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: var(--font-size-button);
+    font-weight: var(--font-weight-bold);
     white-space: nowrap;
 }
-
 .config-container .toggle-group {
     display: flex;
     width: 100%;
     align-items: center;
     gap: 10px;
 }
-
 .config-container .toggle-group .toggle-text-before {
-    font-size: 16px;
-    color: #dddddd;
-    font-weight: bold;
+    font-size: var(--font-size-button);
+    color: var(--color-text-light, #dddddd);
+    font-weight: var(--font-weight-bold);
     padding: 0 8px;
 }
-
 .config-container .toggle-group .toggle-text-after {
-    font-size: 16px;
-    color: #4caf50;
-    font-weight: bold;
+    font-size: var(--font-size-button);
+    color: var(--color-green);
+    font-weight: var(--font-weight-bold);
     padding: 0 8px;
 }
-
 .config-container .toggle-group .toggle-button {
     display: inline-block;
     position: relative;
     width: 60px;
     height: 30px;
     border-radius: 50px;
-    background-color: #dddddd;
+    background-color: var(--color-toggle-bg);
     cursor: pointer;
-    transition: background-color 0.4s;
+    transition: background-color var(--transition-medium);
 }
-
 .config-container .toggle-group .toggle-button:has(:checked) {
-    background-color: #4caf50;
+    background-color: var(--color-green);
 }
-
 .config-container .toggle-group .toggle-button::after {
     position: absolute;
     top: 0;
@@ -309,59 +349,51 @@ input:hover,input:focus,button:hover,button:focus {
     height: 30px;
     border-radius: 50%;
     box-shadow: 0 0 5px rgb(0 0 0 / 20%);
-    background-color: #fff;
+    background-color: var(--color-white);
     content: "";
-    transition: left 0.4s;
+    transition: left var(--transition-medium);
 }
-
 .config-container .toggle-group .toggle-button:has(:checked)::after {
     left: 30px;
 }
-
 .config-container .toggle-group .toggle-button input {
     display: none;
 }
-
 .config-container .config-group {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-
 .config-container .set-config-group {
     display: flex;
     flex-direction: row;
     gap: 10px;
     margin-left: 30px;
 }
-
 .config-container .config-select {
     position: relative;
 }
-
-.config-container select:hover,select:focus {
-    transition: box-shadow 0.5s ease;
-    box-shadow: 0 0 5px 1px whitesmoke;
-    border-radius: 8px;
+.config-container select:hover,
+select:focus {
+    transition: box-shadow var(--transition-slow);
+    box-shadow: 0 0 5px 1px var(--color-border);
+    border-radius: var(--border-radius-default);
 }
-
 .config-container .config-select::before,
 .config-container .config-select::after {
     position: absolute;
     content: "";
     pointer-events: none;
 }
-
 .config-container .config-select::before {
     right: 0;
     display: inline-block;
     width: 2.8em;
     height: 2.8em;
-    border-radius: 0 3px 3px 0;
-    background-color: #ccc;
+    border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+    background-color: var(--color-border-light);
     content: "";
 }
-
 .config-container .config-select::after {
     position: absolute;
     top: 50%;
@@ -369,11 +401,10 @@ input:hover,input:focus,button:hover,button:focus {
     transform: translate(50%, -50%) rotate(45deg);
     width: 6px;
     height: 6px;
-    border-bottom: 3px solid #0f0f0f98;
-    border-right: 3px solid #0f0f0f98;
+    border-bottom: 3px solid var(--color-arrow);
+    border-right: 3px solid var(--color-arrow);
     content: "";
 }
-
 .config-container .config-select select {
     appearance: none;
     -webkit-appearance: none;
@@ -381,18 +412,16 @@ input:hover,input:focus,button:hover,button:focus {
     min-width: 230px;
     height: 2.8em;
     padding: 0.4em 3.6em 0.4em 0.8em;
-    border: 2px solid #ccc;
-    border-radius: 3px;
-    font-size: 16px;
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--border-radius-small);
+    font-size: var(--font-size-button);
     cursor: pointer;
-    background-color: #0f0f0f98;
-    color: #f6f6f6;
+    background-color: var(--color-bg-select);
+    color: var(--color-select-text);
 }
-
 .config-container .config-select select:focus {
-    outline: 1px solid #ccc;
+    outline: 1px solid var(--color-border-light);
 }
-
 .config-container .current-value {
     text-align: left;
     white-space: nowrap;
@@ -401,33 +430,31 @@ input:hover,input:focus,button:hover,button:focus {
     margin: 10px 0 10px 30px;
     min-width: 0;
 }
-
 .config-container input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: var(--padding-input);
+    font-size: var(--font-size-button);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--border-radius-small);
     margin-right: 10px;
     flex: 1;
     cursor: text;
 }
-
 .config-container button {
     padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: var(--font-size-button);
+    font-weight: var(--font-weight-bold);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
-    background-color: #4caf50;
-    color: white;
+    background-color: var(--color-green);
+    color: var(--color-white);
 }
-
 .config-container button:hover {
-    background-color: #337635;
-    transition: background-color 0.5s ease;
+    background-color: var(--color-green-hover);
+    transition: background-color var(--transition-slow);
 }
 
+/* アイコンインジケータ */
 .eye-indicator {
     display: flex;
     align-items: center;
@@ -436,86 +463,71 @@ input:hover,input:focus,button:hover,button:focus {
     margin: 20px;
     padding: 20px;
 }
-
 .icon-container {
     position: relative;
     height: 90px;
 }
-
 .icon-container i {
     font-size: 90px;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--transition-slow);
     position: absolute;
 }
-
 .eye-indicator .icon-container .fa-eye {
     opacity: 0;
 }
-
 .eye-indicator.monitoring .icon-container .fa-eye {
     opacity: 1;
-    color: #86c2fd;
-    text-shadow: 0 0px 8px #2491fc;
+    color: var(--color-blue-light);
+    text-shadow: 0 0px 8px var(--color-blue-shadow);
 }
-
 .eye-indicator .icon-container .fa-eye-slash {
     opacity: 0;
 }
-
 .eye-indicator.not-monitoring .icon-container .fa-eye-slash {
     opacity: 1;
-    color: #e53935;
+    color: var(--color-red-alt);
 }
-
 .eye-indicator .indicator-text {
     font-size: 90px;
     white-space: nowrap;
 }
-
 .eye-indicator.monitoring .indicator-text {
-    color: #86c2fd;
-    text-shadow: 0 0px 8px #2491fc;
+    color: var(--color-blue-light);
+    text-shadow: 0 0px 8px var(--color-blue-shadow);
 }
-
 .eye-indicator.not-monitoring .indicator-text {
-    color: #e53935;
+    color: var(--color-red-alt);
 }
 
+/* レスポンシブ */
 @media screen and (max-width: 768px) {
     .list-container {
         flex-direction: column;
         align-items: center;
     }
-
     .button-move-container {
         flex-direction: row;
         margin: 20px 0;
     }
-
     .button-move-container .moveButton {
         margin: 0 10px;
     }
-
     .list-section {
         width: 100%;
         max-width: 500px;
     }
-
     .list-view {
         max-height: 400px;
     }
-
     .cover-config-container {
         margin: auto;
         max-width: 500px;
         padding: 20px;
     }
-
     .primary-button-container {
         flex-direction: column;
         gap: 15px;
     }
-
     .primary-action-button {
         width: 80%;
     }
