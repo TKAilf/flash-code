@@ -375,13 +375,10 @@ select:focus {
     box-shadow: 0 0 5px 1px var(--color-border);
     border-radius: var(--border-radius-default);
 }
-.config-container .config-select::before,
-.config-container .config-select::after {
+.config-container .config-select::before {
     position: absolute;
     content: "";
     pointer-events: none;
-}
-.config-container .config-select::before {
     right: 0;
     display: inline-block;
     width: 2.8em;
@@ -389,6 +386,11 @@ select:focus {
     border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
     background-color: var(--color-border-light);
     content: "";
+}
+.config-container .config-select::after {
+    position: absolute;
+    content: "";
+    pointer-events: none;
 }
 .config-container .config-select::after {
     position: absolute;
