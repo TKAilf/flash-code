@@ -48,9 +48,6 @@
     --border-radius-default: 8px;
     --border-radius-small: 5px;
     --border-radius-circle: 50%;
-
-    /* その他 */
-    --padding-input: 10px;
 }
 
 /* ページ全体 */
@@ -172,10 +169,9 @@
 }
 
 /* input, button 基本スタイル */
-input,
 button {
     padding: 0;
-    padding-top: 7px;
+    padding-top: 6px;
 }
 input:hover,
 input:focus,
@@ -431,7 +427,6 @@ select:focus {
     min-width: 0;
 }
 .config-container input {
-    padding: var(--padding-input);
     font-size: var(--font-size-button);
     border: 1px solid var(--color-border-light);
     border-radius: var(--border-radius-small);
