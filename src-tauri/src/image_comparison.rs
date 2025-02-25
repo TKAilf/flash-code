@@ -83,7 +83,7 @@ pub fn has_significant_difference(
     info!("しきい値: {}", diff_threshold);
 
     // 閾値との比較
-    normalized_diff > diff_threshold && orange_ratio > 0.3
+    normalized_diff > diff_threshold && orange_ratio > 0.25
 }
 
 fn is_orange(pixel: Rgba<u8>) -> bool {
