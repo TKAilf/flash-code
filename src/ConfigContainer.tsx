@@ -98,6 +98,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                         value={threshold}
                                         onChange={handleThresholdSelectChange}
                                     >
+                                        <option value="">-- 選択してください --</option>
                                         <option value="0.020">高精度</option>
                                         <option value="0.050">
                                             自動（推奨）
@@ -146,6 +147,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                         value={interval}
                                         onChange={handleIntervalSelectChange}
                                     >
+                                        <option value="">-- 選択してください --</option>
                                         <option value="1000">
                                             高速（高負荷）
                                         </option>
