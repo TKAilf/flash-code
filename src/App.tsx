@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { info, error, attachConsole } from "tauri-plugin-log-api";
 import { dialog } from "@tauri-apps/api";
-import { listen } from "@tauri-apps/api/event";
+import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { ConfigContainer } from "./ConfigContainer";
 import { EyeAnimation } from "./EyeAnimation";
 import { ListSection } from "./ListSection";
@@ -32,9 +32,15 @@ function App() {
     const [isMonitoring, setIsMonitoring] = useState(false);
 
     useEffect(() => {
-        attachConsole();
-        info("fetchWindows呼び出し開始");
-        fetchWindows();
+        (async () => {
+            attachConsole();
+            info("fetchWindows呼び出し開始");
+            try {
+                await fetchWindows();
+            } catch (e) {
+                error(`fetchWindows実行中にエラーが発生しました: ${e}`);
+            }
+        })();
     }, []);
 
     const fetchWindows = async () => {
@@ -65,12 +71,26 @@ function App() {
     };
 
     useEffect(() => {
-        const unlistenPromise = listen("monitoring_stopped", (_event) => {
-            info("monitoring_stopped イベントを受信しました。");
-            setIsMonitoring(false);
-        });
+        let unlisten: UnlistenFn;
+        (async () => {
+            try {
+                unlisten = await listen("monitoring_stopped", (_event) => {
+                    info("monitoring_stopped イベントを受信しました。");
+                    setIsMonitoring(false);
+                });
+            } catch (e) {
+                error(`listenの登録中にでエラーが発生しました: ${e}`);
+            }
+        })();
+
         return () => {
-            unlistenPromise.then((unlisten) => unlisten());
+            if (unlisten) {
+                try {
+                    unlisten();
+                } catch (e) {
+                    error(`unlistenの解除中にエラーが発生しました: ${e}`);
+                }
+            }
         };
     }, []);
 
