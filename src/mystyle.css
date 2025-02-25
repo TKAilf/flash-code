@@ -55,6 +55,8 @@
     margin: 0 40px;
     padding: 10vh 0;
     background-color: var(--color-page-bg);
+    white-space: nowrap;
+    min-width: 500px;
 }
 
 /* 見出し */
@@ -512,9 +514,7 @@ select:focus {
         max-height: 400px;
     }
     .cover-config-container {
-        margin: auto;
         max-width: 500px;
-        padding: 20px;
     }
     .primary-button-container {
         flex-direction: column;
