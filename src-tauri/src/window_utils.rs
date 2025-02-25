@@ -407,9 +407,9 @@ pub fn initilize_config_file(config_file: &Path) {
     match fs::write(
         config_file,
         r#"{
-"DISCORD_WEBHOOK_URL": "DiscordBotURLを入力してください",
+"DISCORD_WEBHOOK_URL": "",
 "THRESHOLD": "0.050",
-"INTERVAL": "3000"
+"INTERVAL": "1000"
 }"#,
     ) {
         Ok(_) => info!("設定ファイルを初期化しました。"),
