@@ -100,7 +100,6 @@ fn is_orange(pixel: Rgba<u8>) -> bool {
     // ユークリッド距離の計算
     let distance =
         ((r - orange_r).powi(2) + (g - orange_g).powi(2) + (b - orange_b).powi(2)).sqrt();
-    info!("distance: {}", distance);
 
     // 距離の閾値（調整可能、ここでは0.7とする）
     let threshold = 0.7;
