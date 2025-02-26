@@ -65,9 +65,11 @@ pub fn has_significant_difference(
             let diff_b = (pixel1[2] as i32 - pixel2[2] as i32).abs() as u64;
             total_diff += diff_r + diff_g + diff_b;
 
-            // 2枚目の画像のピクセルがオレンジ色かどうか
-            if is_orange(pixel2) {
-                orange_count += 1;
+            // オレンジ色の判定はサブ領域に限定
+            if (x >= 8 && x < 12) && (y >= 8 && y < 12) {
+                if is_orange(pixel2) {
+                    orange_count += 1;
+                }
             }
         }
     }
@@ -76,7 +78,8 @@ pub fn has_significant_difference(
     let normalized_diff = total_diff as f32 / max_diff as f32;
 
     // オレンジ色ピクセルの比率
-    let orange_ratio = orange_count as f32 / total_pixels as f32;
+    let sub_total_pixels = (12 - 8) * (12 - 8);
+    let orange_ratio = orange_count as f32 / sub_total_pixels as f32;
 
     info!("正規化された差分値: {}", normalized_diff);
     info!("オレンジピクセルの比率: {}", orange_ratio);
