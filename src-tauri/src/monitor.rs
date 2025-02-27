@@ -1,7 +1,8 @@
 // monitor.rs
 use crate::{
     discord_notifier::send_discord_notification, image_comparison::has_significant_difference,
-    screen_capture::capture_icon_image, window_utils::AppInfo,
+    line_notifier::send_line_notification, screen_capture::capture_icon_image,
+    window_utils::AppInfo,
 };
 use log::{error, info};
 use std::{path::PathBuf, time::Duration};
@@ -74,7 +75,8 @@ pub async fn monitor_app_icon(
         if has_significant_difference(&initial_image, &current_image, threshold) {
             info!("アイコンに変化がありました。");
             // 変化が検知された場合の処理
-            send_discord_notification(&app_info.name, config_path).await;
+            send_discord_notification(&app_info.name, config_path.clone()).await;
+            send_line_notification(&app_info.name, config_path.clone()).await;
 
             match app_handle.emit_all("monitoring_stopped", ()) {
                 Ok(_) => info!("monitoring_stoppedイベントを送信しました。"),

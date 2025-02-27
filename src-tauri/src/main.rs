@@ -6,6 +6,7 @@ mod config_manager;
 mod discord_notifier;
 mod icon_position;
 mod image_comparison;
+mod line_notifier;
 mod monitor;
 mod screen_capture;
 mod window_collection;

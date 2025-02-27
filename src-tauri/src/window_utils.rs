@@ -408,6 +408,8 @@ pub fn initilize_config_file(config_file: &Path) {
         config_file,
         r#"{
 "DISCORD_WEBHOOK_URL": "",
+"LINE_CHANNEL_ACCESS_TOKEN": "",
+LINE_TARGET: "",
 "THRESHOLD": "0.050",
 "INTERVAL": "1000"
 }"#,
