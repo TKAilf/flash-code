@@ -8,7 +8,10 @@ use log::{error, info};
 use std::{path::PathBuf, time::Duration};
 use tauri::Manager;
 use tokio::time::sleep;
-use windows::Win32::Foundation::HWND;
+use windows::Win32::{
+    Foundation::{FALSE, HWND, TRUE},
+    UI::WindowsAndMessaging::{ShowWindow, SW_MINIMIZE},
+};
 
 /// 監視対象のアプリケーションアイコンを定期的にチェックする非同期関数。
 ///
@@ -47,6 +50,22 @@ pub async fn monitor_app_icon(
     app_handle: tauri::AppHandle,
 ) {
     info!("monitor_app_iconを呼び出しました。");
+    // 対象ウィンドウの最小化
+    unsafe {
+        let result = ShowWindow(HWND(app_info.hwnd as *mut _), SW_MINIMIZE);
+        match result {
+            FALSE => {
+                error!("ウィンドウの最小化に失敗しました。");
+                return;
+            }
+            TRUE => {
+                info!("ウィンドウを最小化しました。");
+            }
+            _ => {
+                error!("予期しないエラー：{:?}", result)
+            }
+        };
+    }
     // 初期状態のアイコン画像を取得
     let initial_image = match capture_icon_image(HWND(app_info.hwnd as *mut _)) {
         Some(img) => img,
