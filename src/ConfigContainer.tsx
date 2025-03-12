@@ -102,10 +102,10 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                             -- 選択してください --
                                         </option>
                                         <option value="0.020">高精度</option>
-                                        <option value="0.050">
+                                        <option value="0.040">
                                             自動（推奨）
                                         </option>
-                                        <option value="0.100">低精度</option>
+                                        <option value="0.060">低精度</option>
                                     </select>
                                 </div>
                             )}
