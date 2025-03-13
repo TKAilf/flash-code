@@ -175,9 +175,9 @@ function App() {
         );
     };
 
-    const startMonitoring = async (apps: AppInfo[]) => {
+    const startMonitoring = async () => {
         try {
-            await invoke("start_monitoring", { apps: [...apps] });
+            await invoke("start_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(true);
         } catch (e) {
             error(`start_monitoring呼び出しでエラーが起きました: ${e}`);
@@ -195,7 +195,7 @@ function App() {
 
         setAvailableItems(newAvailableItems);
 
-        await startMonitoring(monitoredItems);
+        await startMonitoring();
     };
 
     const handleMonitor = async () => {
@@ -203,7 +203,7 @@ function App() {
             await dialog.message("監視対象がありません", { title: "情報" });
             return;
         }
-        await startMonitoring(monitoredItems);
+        await startMonitoring();
     };
 
     const handleStopMonitoring = async () => {
