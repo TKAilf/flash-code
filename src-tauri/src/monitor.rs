@@ -9,8 +9,8 @@ use std::{path::PathBuf, time::Duration};
 use tauri::Manager;
 use tokio::time::sleep;
 use windows::Win32::{
-    Foundation::{FALSE, HWND, TRUE},
-    UI::WindowsAndMessaging::{ShowWindow, SW_MINIMIZE, SW_RESTORE},
+    Foundation::{HWND, LPARAM, LRESULT, WPARAM},
+    UI::WindowsAndMessaging::{SendMessageW, SC_MINIMIZE, SC_RESTORE, WM_SYSCOMMAND},
 };
 
 /// 監視対象のアプリケーションアイコンを定期的にチェックする非同期関数。
@@ -52,20 +52,20 @@ pub async fn monitor_app_icon(
     info!("monitor_app_iconを呼び出しました。");
     // 対象ウィンドウの最小化
     unsafe {
-        let result = ShowWindow(HWND(app_info.hwnd as *mut _), SW_MINIMIZE);
-        match result {
-            FALSE => {
-                error!("ウィンドウの最小化に失敗しました。");
-                return;
-            }
-            TRUE => {
-                info!("ウィンドウを最小化しました。");
-            }
-            _ => {
-                error!("予期しないエラー：{:?}", result)
-            }
-        };
+        let result = SendMessageW(
+            HWND(app_info.hwnd as *mut _),
+            WM_SYSCOMMAND,
+            WPARAM(SC_MINIMIZE as usize),
+            LPARAM(0),
+        );
+        if result == LRESULT(0) {
+            info!("ウィンドウを最小化しました。(返り値: {:?})", result);
+        } else {
+            error!("ウィンドウの最小化に失敗しました。: {:?}", result);
+            return;
+        }
     }
+
     // 初期状態のアイコン画像を取得
     let initial_image = match capture_icon_image(HWND(app_info.hwnd as *mut _)) {
         Some(img) => img,
@@ -98,19 +98,18 @@ pub async fn monitor_app_icon(
             send_line_notification(&app_info.name, config_path.clone()).await;
 
             unsafe {
-                let result = ShowWindow(HWND(app_info.hwnd as *mut _), SW_RESTORE);
-                match result {
-                    FALSE => {
-                        error!("ウィンドウの復元に失敗しました。");
-                        return;
-                    }
-                    TRUE => {
-                        info!("ウィンドウを復元しました。");
-                    }
-                    _ => {
-                        error!("予期しないエラー：{:?}", result)
-                    }
-                };
+                let result = SendMessageW(
+                    HWND(app_info.hwnd as *mut _),
+                    WM_SYSCOMMAND,
+                    WPARAM(SC_RESTORE as usize),
+                    LPARAM(0),
+                );
+                if result == LRESULT(0) {
+                    info!("ウィンドウを復元しました。 (返り値: {:?})", result);
+                } else {
+                    error!("ウィンドウの復元に失敗しました。: {:?}", result);
+                    return;
+                }
             }
 
             match app_handle.emit_all("monitoring_stopped", ()) {

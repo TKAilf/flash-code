@@ -5,8 +5,8 @@ use std::path::Path;
 use std::{collections::HashMap, path::PathBuf, ptr::null_mut};
 use tauri::async_runtime::{JoinHandle, Mutex};
 use tauri::State;
-use windows::Win32::Foundation::{FALSE, TRUE};
-use windows::Win32::UI::WindowsAndMessaging::{ShowWindow, SW_RESTORE};
+use windows::Win32::Foundation::{LPARAM, LRESULT, WPARAM};
+use windows::Win32::UI::WindowsAndMessaging::{SendMessageW, SC_RESTORE, WM_SYSCOMMAND};
 use windows::{
     core::HRESULT,
     Win32::{
@@ -69,6 +69,7 @@ impl MonitorState {
     }
 
     pub async fn stop_all(&self, apps: Vec<AppInfo>) {
+        info!("stop_allを呼び出しました。");
         let mut tasks = self.tasks.lock().await;
         for (_, handle) in tasks.drain() {
             handle.abort();
@@ -76,19 +77,18 @@ impl MonitorState {
 
         for app in apps {
             unsafe {
-                let result = ShowWindow(HWND(app.hwnd as *mut _), SW_RESTORE);
-                match result {
-                    FALSE => {
-                        error!("ウィンドウの復元に失敗しました。");
-                        return;
-                    }
-                    TRUE => {
-                        info!("ウィンドウを復元しました。");
-                    }
-                    _ => {
-                        error!("予期しないエラー：{:?}", result)
-                    }
-                };
+                let result = SendMessageW(
+                    HWND(app.hwnd as *mut _),
+                    WM_SYSCOMMAND,
+                    WPARAM(SC_RESTORE as usize),
+                    LPARAM(0),
+                );
+                if result == LRESULT(0) {
+                    info!("ウィンドウを復元しました。 (返り値: {:?})", result);
+                } else {
+                    error!("ウィンドウの復元に失敗しました。： {:?}", result);
+                    return;
+                }
             }
         }
     }
