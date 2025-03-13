@@ -37,7 +37,16 @@ fn main() {
         })
         .plugin(
             tauri_plugin_log::Builder::default()
-                .level(log::LevelFilter::Info)
+                .level({
+                    #[cfg(debug_assertions)]
+                    {
+                        log::LevelFilter::Info
+                    }
+                    #[cfg(not(debug_assertions))]
+                    {
+                        log::LevelFilter::Error
+                    }
+                })
                 .targets(vec![LogTarget::LogDir])
                 .log_name({
                     #[cfg(debug_assertions)]

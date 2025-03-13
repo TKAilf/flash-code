@@ -101,7 +101,7 @@ function App() {
                 { title: "警告" }
             );
             if (!confirmed) return;
-            await invoke("stop_monitoring");
+            await invoke("stop_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(false);
             setMonitoredItems([]);
             fetchWindows();
@@ -177,7 +177,7 @@ function App() {
 
     const startMonitoring = async (apps: AppInfo[]) => {
         try {
-            await invoke("start_monitoring", { apps });
+            await invoke("start_monitoring", { apps: [...apps] });
             setIsMonitoring(true);
         } catch (e) {
             error(`start_monitoring呼び出しでエラーが起きました: ${e}`);
@@ -208,7 +208,7 @@ function App() {
 
     const handleStopMonitoring = async () => {
         try {
-            await invoke("stop_monitoring");
+            await invoke("stop_monitoring", { apps: [...monitoredItems]  });
             setIsMonitoring(false);
         } catch (e) {
             error(`stop_monitoring呼び出しでエラーが起きました: ${e}`);
@@ -217,7 +217,7 @@ function App() {
 
     const handleClose = async () => {
         try {
-            await invoke("stop_monitoring");
+            await invoke("stop_monitoring", { apps: [...monitoredItems]  });
             setIsMonitoring(false);
             window.close();
         } catch (e) {

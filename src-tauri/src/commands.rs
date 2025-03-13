@@ -39,7 +39,7 @@ pub async fn start_monitoring(
     apps: Vec<AppInfo>,
 ) -> Result<(), String> {
     info!("start_monitoringを呼び出しました。");
-    monitor_state.stop_all().await;
+    monitor_state.stop_all(apps.clone()).await;
     for app in apps {
         let interval_str = match get_interval(config_state.clone()).await {
             Ok(val) => val,
@@ -115,8 +115,11 @@ pub async fn start_monitoring(
 /// ```
 ///
 #[tauri::command]
-pub async fn stop_monitoring(monitor_state: State<'_, MonitorState>) -> Result<(), String> {
-    monitor_state.stop_all().await;
+pub async fn stop_monitoring(
+    monitor_state: State<'_, MonitorState>,
+    apps: Vec<AppInfo>,
+) -> Result<(), String> {
+    monitor_state.stop_all(apps).await;
     Ok(())
 }
 

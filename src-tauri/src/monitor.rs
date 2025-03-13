@@ -10,7 +10,7 @@ use tauri::Manager;
 use tokio::time::sleep;
 use windows::Win32::{
     Foundation::{FALSE, HWND, TRUE},
-    UI::WindowsAndMessaging::{ShowWindow, SW_MINIMIZE},
+    UI::WindowsAndMessaging::{ShowWindow, SW_MINIMIZE, SW_RESTORE},
 };
 
 /// 監視対象のアプリケーションアイコンを定期的にチェックする非同期関数。
@@ -96,6 +96,22 @@ pub async fn monitor_app_icon(
             // 変化が検知された場合の処理
             send_discord_notification(&app_info.name, config_path.clone()).await;
             send_line_notification(&app_info.name, config_path.clone()).await;
+
+            unsafe {
+                let result = ShowWindow(HWND(app_info.hwnd as *mut _), SW_RESTORE);
+                match result {
+                    FALSE => {
+                        error!("ウィンドウの復元に失敗しました。");
+                        return;
+                    }
+                    TRUE => {
+                        info!("ウィンドウを復元しました。");
+                    }
+                    _ => {
+                        error!("予期しないエラー：{:?}", result)
+                    }
+                };
+            }
 
             match app_handle.emit_all("monitoring_stopped", ()) {
                 Ok(_) => info!("monitoring_stoppedイベントを送信しました。"),

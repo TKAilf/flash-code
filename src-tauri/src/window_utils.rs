@@ -1,10 +1,12 @@
-use log::{info, warn};
+use log::{error, info, warn};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 use std::{collections::HashMap, path::PathBuf, ptr::null_mut};
 use tauri::async_runtime::{JoinHandle, Mutex};
 use tauri::State;
+use windows::Win32::Foundation::{FALSE, TRUE};
+use windows::Win32::UI::WindowsAndMessaging::{ShowWindow, SW_RESTORE};
 use windows::{
     core::HRESULT,
     Win32::{
@@ -28,7 +30,7 @@ use crate::monitor::monitor_app_icon;
 /// - `thread_id`: スレッド ID。
 /// - `icon`: アプリケーションのアイコンを Base64 形式でエンコードした文字列。
 ///
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AppInfo {
     pub name: String,         // ウィンドウのタイトル
     pub hwnd: isize,          // ウィンドウハンドル(isize型)
@@ -66,10 +68,28 @@ impl MonitorState {
         }
     }
 
-    pub async fn stop_all(&self) {
+    pub async fn stop_all(&self, apps: Vec<AppInfo>) {
         let mut tasks = self.tasks.lock().await;
         for (_, handle) in tasks.drain() {
             handle.abort();
+        }
+
+        for app in apps {
+            unsafe {
+                let result = ShowWindow(HWND(app.hwnd as *mut _), SW_RESTORE);
+                match result {
+                    FALSE => {
+                        error!("ウィンドウの復元に失敗しました。");
+                        return;
+                    }
+                    TRUE => {
+                        info!("ウィンドウを復元しました。");
+                    }
+                    _ => {
+                        error!("予期しないエラー：{:?}", result)
+                    }
+                };
+            }
         }
     }
 
