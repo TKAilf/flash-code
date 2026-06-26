@@ -1,5 +1,6 @@
 import React from "react";
 import { AppInfo } from "./types";
+import { logFrontend } from "./logger";
 
 interface ListItemProps {
     item: AppInfo;
@@ -22,7 +23,7 @@ export const ListItem: React.FC<ListItemProps> = ({
                     src={`data:image/png;base64,${item.icon}`}
                     alt=""
                     className="window-icon"
-                    onError={() => console.warn("failed to load icon")}
+                    onError={() => logFrontend("warn", "failed to load icon")}
                 />
             )}
             <span className="window-title">

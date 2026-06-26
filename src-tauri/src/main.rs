@@ -69,7 +69,8 @@ fn main() {
             commands::update_interval,
             commands::get_webhook_url,
             commands::get_threshold,
-            commands::get_interval
+            commands::get_interval,
+            commands::log_from_frontend
         ])
         .run(tauri::generate_context!())
         .expect("tauri::Builder::default() | run: error while running tauri application");

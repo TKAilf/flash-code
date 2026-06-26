@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::{debug, error, info, warn};
 use tauri::State;
 
 use crate::window_utils::{AppInfo, ConfigState, MonitorState};
@@ -433,5 +433,15 @@ pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String
             error!("監視間隔の取得に失敗しました: {}", e);
             Err(e)
         }
+    }
+}
+
+#[tauri::command]
+pub fn log_from_frontend(level: String, message: String) {
+    match level.as_str() {
+        "error" => error!("[frontend] {}", message),
+        "warn" => warn!("[frontend] {}", message),
+        "debug" => debug!("[frontend] {}", message),
+        _ => info!("[frontend] {}", message),
     }
 }
