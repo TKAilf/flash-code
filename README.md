@@ -20,28 +20,29 @@ Windows のタスクバーに表示されているアプリケーションアイ
 ## 動作環境
 
 - Windows 10 以降
-- Node.js 20 以降
+- Node.js 20 LTS 推奨
 - Rust stable
 - npm
 
-管理者権限は前提にしていません。ただし、対象アプリやセキュリティソフトの制限により、ウィンドウ情報や画面キャプチャを取得できない場合があります。
+Node.js 24 でも動く可能性はありますが、このプロジェクトでは Tauri v1 と Vite 5 系を前提にしています。Vite 8 系は Rolldown の native binding を読み込むため、Windows の Application Control policy にブロックされる環境では起動できないことがあります。
 
 ## セットアップ
 
+初回、または Vite / Rolldown の native binding エラーが出た場合は、依存関係を作り直します。
+
 ```powershell
-npm install
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm.cmd install
 cd src-tauri
 cargo build
 cd ..
-npm run tauri dev
-```
-
-PowerShell の実行ポリシーで `npm` が止まる場合は、Windows の `npm.cmd` を使います。
-
-```powershell
-npm.cmd install
 npm.cmd run tauri dev
 ```
+
+`package.json` では `vite` を `5.4.21` に固定しています。`package-lock.json` が古い Vite 8 系を保持している場合、`node_modules` だけを消しても再発するため、`package-lock.json` も削除してから `npm.cmd install` してください。
+
+PowerShell の実行ポリシーで `npm` が止まる場合は、`npm` ではなく `npm.cmd` を使います。
 
 ## 使い方
 
@@ -59,21 +60,21 @@ npm.cmd run tauri dev
 
 ```json
 {
-    "DISCORD_WEBHOOK_URL": "",
-    "LINE_CHANNEL_ACCESS_TOKEN": "",
-    "LINE_TARGET": "",
-    "THRESHOLD": "0.050",
-    "INTERVAL": "1000"
+  "DISCORD_WEBHOOK_URL": "",
+  "LINE_CHANNEL_ACCESS_TOKEN": "",
+  "LINE_TARGET": "",
+  "THRESHOLD": "0.050",
+  "INTERVAL": "1000"
 }
 ```
 
-| 項目                        | 内容                                                                               |
-| --------------------------- | ---------------------------------------------------------------------------------- |
-| `DISCORD_WEBHOOK_URL`       | Discord Webhook URL。空の場合、Discord 通知は送信しません。                        |
+| 項目 | 内容 |
+|---|---|
+| `DISCORD_WEBHOOK_URL` | Discord Webhook URL。空の場合、Discord 通知は送信しません。 |
 | `LINE_CHANNEL_ACCESS_TOKEN` | LINE Messaging API のチャネルアクセストークン。空の場合、LINE 通知は送信しません。 |
-| `LINE_TARGET`               | LINE の送信先 ID。空の場合、LINE 通知は送信しません。                              |
-| `THRESHOLD`                 | 画像差分しきい値。`0.0` から `1.0` の有限数を指定します。                          |
-| `INTERVAL`                  | 監視間隔。ミリ秒単位で、`100` 以上を指定します。                                   |
+| `LINE_TARGET` | LINE の送信先 ID。空の場合、LINE 通知は送信しません。 |
+| `THRESHOLD` | 画像差分しきい値。`0.0` から `1.0` の有限数を指定します。 |
+| `INTERVAL` | 監視間隔。ミリ秒単位で、`100` 以上を指定します。 |
 
 ## 検知方式
 
