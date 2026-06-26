@@ -1,6 +1,5 @@
 import React from "react";
 import { AppInfo } from "./types";
-import { warn } from "tauri-plugin-log-api";
 
 interface ListItemProps {
     item: AppInfo;
@@ -23,7 +22,7 @@ export const ListItem: React.FC<ListItemProps> = ({
                     src={`data:image/png;base64,${item.icon}`}
                     alt=""
                     className="window-icon"
-                    onError={() => warn("failed to load icon")}
+                    onError={() => console.warn("failed to load icon")}
                 />
             )}
             <span className="window-title">

@@ -23,8 +23,11 @@ Windows のタスクバーに表示されているアプリケーションアイ
 - Node.js 20 LTS 推奨
 - Rust stable
 - npm
+- Microsoft Edge WebView2 Runtime
 
 Node.js 24 でも動く可能性はありますが、このプロジェクトでは Tauri v1 と Vite 5 系を前提にしています。Vite 8 系は Rolldown の native binding を読み込むため、Windows の Application Control policy にブロックされる環境では起動できないことがあります。
+
+MSI 作成時の WebView2 設定は `skip` です。これはビルド時に Microsoft の WebView2 Bootstrapper をダウンロードしないための設定です。配布先 PC に WebView2 Runtime が入っていない場合は、アプリ起動前に別途インストールしてください。
 
 ## セットアップ
 
@@ -43,6 +46,14 @@ npm.cmd run tauri dev
 `package.json` では `vite` を `5.4.21` に固定しています。`package-lock.json` が古い Vite 8 系を保持している場合、`node_modules` だけを消しても再発するため、`package-lock.json` も削除してから `npm.cmd install` してください。
 
 PowerShell の実行ポリシーで `npm` が止まる場合は、`npm` ではなく `npm.cmd` を使います。
+
+## リリースビルド
+
+```powershell
+npm.cmd run tauri build
+```
+
+生成物は `src-tauri\target\release\bundle\msi` に出力されます。
 
 ## 使い方
 

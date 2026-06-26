@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { info, error, attachConsole } from "tauri-plugin-log-api";
 import { dialog } from "@tauri-apps/api";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { ConfigContainer } from "./ConfigContainer";
@@ -38,12 +37,11 @@ function App() {
 
     useEffect(() => {
         (async () => {
-            attachConsole();
-            info("fetchWindows called");
+            console.info("fetchWindows called");
             try {
                 await fetchWindows();
             } catch (e) {
-                error(`fetchWindows failed: ${e}`);
+                console.error(`fetchWindows failed: ${e}`);
             }
         })();
     }, []);
@@ -58,7 +56,7 @@ function App() {
             const windows: AppInfo[] = await invoke("get_taskbar_apps");
             setAvailableItems(windows);
         } catch (e) {
-            error(`get_taskbar_apps failed: ${e}`);
+            console.error(`get_taskbar_apps failed: ${e}`);
         }
     };
 
@@ -71,7 +69,7 @@ function App() {
             setCurrentThreshold(threshold);
             setCurrentInterval(interval);
         } catch (e) {
-            error(`get_config failed: ${e}`);
+            console.error(`get_config failed: ${e}`);
         }
     };
 
@@ -80,14 +78,14 @@ function App() {
         (async () => {
             try {
                 unlisten = await listen("monitoring_stopped", async () => {
-                    info("monitoring_stopped event received");
+                    console.info("monitoring_stopped event received");
                     await invoke("stop_monitoring", {
                         apps: [...monitoredItemsRef.current],
                     });
                     setIsMonitoring(false);
                 });
             } catch (e) {
-                error(`failed to register listener: ${e}`);
+                console.error(`failed to register listener: ${e}`);
             }
         })();
 
@@ -96,7 +94,7 @@ function App() {
                 try {
                     unlisten();
                 } catch (e) {
-                    error(`failed to remove listener: ${e}`);
+                    console.error(`failed to remove listener: ${e}`);
                 }
             }
         };
@@ -116,7 +114,7 @@ function App() {
             initSelectedMonitoredItem();
             await fetchWindows();
         } catch (e) {
-            error(`refresh list failed: ${e}`);
+            console.error(`refresh list failed: ${e}`);
         }
     };
 
@@ -190,7 +188,7 @@ function App() {
             await invoke("start_monitoring", { apps: [...apps] });
             setIsMonitoring(true);
         } catch (e) {
-            error(`start_monitoring failed: ${e}`);
+            console.error(`start_monitoring failed: ${e}`);
         }
     };
 
@@ -217,7 +215,7 @@ function App() {
             await invoke("stop_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(false);
         } catch (e) {
-            error(`stop_monitoring failed: ${e}`);
+            console.error(`stop_monitoring failed: ${e}`);
         }
     };
 
@@ -227,7 +225,7 @@ function App() {
             setIsMonitoring(false);
             window.close();
         } catch (e) {
-            error(`close failed: ${e}`);
+            console.error(`close failed: ${e}`);
         }
     };
 
@@ -266,7 +264,7 @@ function App() {
             await invoke("update_webhook_url", { url: webhookUrl });
             setCurrentWebhookUrl(webhookUrl);
         } catch (e) {
-            error(`update_webhook_url failed: ${e}`);
+            console.error(`update_webhook_url failed: ${e}`);
         }
     };
 
@@ -275,7 +273,7 @@ function App() {
             await invoke("update_threshold", { threshold });
             setCurrentThreshold(threshold);
         } catch (e) {
-            error(`update_threshold failed: ${e}`);
+            console.error(`update_threshold failed: ${e}`);
         }
     };
 
@@ -284,7 +282,7 @@ function App() {
             await invoke("update_interval", { interval });
             setCurrentInterval(interval);
         } catch (e) {
-            error(`update_interval failed: ${e}`);
+            console.error(`update_interval failed: ${e}`);
         }
     };
 

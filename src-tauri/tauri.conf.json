@@ -53,7 +53,7 @@
             ],
             "windows": {
                 "webviewInstallMode": {
-                    "type": "embedBootstrapper"
+                    "type": "skip"
                 },
                 "wix": {
                     "language": ["ja-JP", "en-US"]
