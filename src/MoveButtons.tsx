@@ -17,14 +17,14 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
             <button
                 className="moveButton"
                 onClick={onAddClick}
-                title="選択したウィンドウを追加"
+                title="選択したウィンドウを監視対象に追加"
             >
                 <FaPlus size={20} />
             </button>
             <button
                 className="moveButton"
                 onClick={onRemoveClick}
-                title="選択したウィンドウを削除"
+                title="選択したウィンドウを監視対象から削除"
             >
                 <FaMinus size={20} />
             </button>

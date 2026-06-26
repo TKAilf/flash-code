@@ -2,7 +2,7 @@ use log::{error, info, warn};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use std::{collections::HashMap, path::PathBuf, ptr::null_mut};
+use std::{collections::HashMap, path::PathBuf};
 use tauri::async_runtime::{JoinHandle, Mutex};
 use tauri::State;
 use windows::Win32::Foundation::{LPARAM, LRESULT, WPARAM};
@@ -120,26 +120,29 @@ impl MonitorState {
 /// - `new`: 指定したウィンドウハンドルから HDC を取得。
 /// - `as_hdc`: 内部の HDC を返す。
 ///
-pub struct HdcWrapper(HDC);
+pub struct HdcWrapper {
+    hwnd: HWND,
+    hdc: HDC,
+}
 impl HdcWrapper {
     pub unsafe fn new(hwnd: HWND) -> Option<Self> {
         let hdc = GetDC(hwnd);
         if hdc.0.is_null() {
             None
         } else {
-            Some(Self(hdc))
+            Some(Self { hwnd, hdc })
         }
     }
 
     pub fn as_hdc(&self) -> HDC {
-        self.0
+        self.hdc
     }
 }
 
 impl Drop for HdcWrapper {
     fn drop(&mut self) {
         unsafe {
-            ReleaseDC(HWND(null_mut()), self.0);
+            let _ = ReleaseDC(self.hwnd, self.hdc);
         }
     }
 }

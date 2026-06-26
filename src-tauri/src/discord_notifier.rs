@@ -66,6 +66,11 @@ pub async fn send_discord_notification(app_name: &str, config_path: PathBuf) {
         }
     };
 
+    if webhook_url.trim().is_empty() {
+        info!("Discord webhook URL is not configured. Skipping notification.");
+        return;
+    }
+
     let client = Client::new();
     let content = format!(
         "アプリケーション「{}」のアイコンに変化がありました。",

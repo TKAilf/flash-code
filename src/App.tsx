@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { info, error, attachConsole } from "tauri-plugin-log-api";
 import { dialog } from "@tauri-apps/api";
@@ -10,7 +10,7 @@ import { MoveButtons } from "./MoveButtons";
 import { PrimaryActionButtons } from "./PrimaryActionButtons";
 import { AppInfo } from "./types";
 import "./App.css";
-import "./MyStyle.css";
+import "./mystyle.css";
 
 function App() {
     const [availableItems, setAvailableItems] = useState<AppInfo[]>([]);
@@ -30,15 +30,20 @@ function App() {
     const [currentThreshold, setCurrentThreshold] = useState<string>("");
     const [currentInterval, setCurrentInterval] = useState<string>("");
     const [isMonitoring, setIsMonitoring] = useState(false);
+    const monitoredItemsRef = useRef<AppInfo[]>([]);
+
+    useEffect(() => {
+        monitoredItemsRef.current = monitoredItems;
+    }, [monitoredItems]);
 
     useEffect(() => {
         (async () => {
             attachConsole();
-            info("fetchWindows呼び出し開始");
+            info("fetchWindows called");
             try {
                 await fetchWindows();
             } catch (e) {
-                error(`fetchWindows実行中にエラーが発生しました: ${e}`);
+                error(`fetchWindows failed: ${e}`);
             }
         })();
     }, []);
@@ -53,7 +58,7 @@ function App() {
             const windows: AppInfo[] = await invoke("get_taskbar_apps");
             setAvailableItems(windows);
         } catch (e) {
-            error(`get_taskbar_apps呼び出しでエラーが発生しました: ${e}`);
+            error(`get_taskbar_apps failed: ${e}`);
         }
     };
 
@@ -66,20 +71,23 @@ function App() {
             setCurrentThreshold(threshold);
             setCurrentInterval(interval);
         } catch (e) {
-            error(`get_config呼び出しでエラーが発生しました: ${e}`);
+            error(`get_config failed: ${e}`);
         }
     };
 
     useEffect(() => {
-        let unlisten: UnlistenFn;
+        let unlisten: UnlistenFn | undefined;
         (async () => {
             try {
-                unlisten = await listen("monitoring_stopped", (_event) => {
-                    info("monitoring_stopped イベントを受信しました。");
+                unlisten = await listen("monitoring_stopped", async () => {
+                    info("monitoring_stopped event received");
+                    await invoke("stop_monitoring", {
+                        apps: [...monitoredItemsRef.current],
+                    });
                     setIsMonitoring(false);
                 });
             } catch (e) {
-                error(`listenの登録中にでエラーが発生しました: ${e}`);
+                error(`failed to register listener: ${e}`);
             }
         })();
 
@@ -88,25 +96,27 @@ function App() {
                 try {
                     unlisten();
                 } catch (e) {
-                    error(`unlistenの解除中にエラーが発生しました: ${e}`);
+                    error(`failed to remove listener: ${e}`);
                 }
             }
         };
     }, []);
 
-    const refresh_list = async () => {
+    const refreshList = async () => {
         try {
             const confirmed = await dialog.ask(
-                "監視を停止し、リストを最新状態へ更新します",
-                { title: "警告" }
+                "監視を停止し、リストを最新の状態に更新します。",
+                { title: "確認" }
             );
             if (!confirmed) return;
             await invoke("stop_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(false);
             setMonitoredItems([]);
-            fetchWindows();
+            initSelectedAvailableItem();
+            initSelectedMonitoredItem();
+            await fetchWindows();
         } catch (e) {
-            error(`stop_monitoring呼び出しでエラーが起きました: ${e}`);
+            error(`refresh list failed: ${e}`);
         }
     };
 
@@ -175,32 +185,28 @@ function App() {
         );
     };
 
-    const startMonitoring = async () => {
+    const startMonitoring = async (apps = monitoredItems) => {
         try {
-            await invoke("start_monitoring", { apps: [...monitoredItems] });
+            await invoke("start_monitoring", { apps: [...apps] });
             setIsMonitoring(true);
         } catch (e) {
-            error(`start_monitoring呼び出しでエラーが起きました: ${e}`);
+            error(`start_monitoring failed: ${e}`);
         }
     };
 
     const handleMonitorAll = async () => {
-        const newAvailableItems = availableItems.filter((item) => {
-            setMonitoredItems((prevMonitoredItems) => [
-                ...prevMonitoredItems,
-                item,
-            ]);
-            return false; // すべてのアイテムを削除するためにfalseを返す
-        });
+        const nextMonitoredItems = [...monitoredItems, ...availableItems];
+        setMonitoredItems(nextMonitoredItems);
+        setAvailableItems([]);
+        initSelectedAvailableItem();
+        initSelectedMonitoredItem();
 
-        setAvailableItems(newAvailableItems);
-
-        await startMonitoring();
+        await startMonitoring(nextMonitoredItems);
     };
 
     const handleMonitor = async () => {
         if (monitoredItems.length === 0) {
-            await dialog.message("監視対象がありません", { title: "情報" });
+            await dialog.message("監視対象がありません。", { title: "情報" });
             return;
         }
         await startMonitoring();
@@ -208,20 +214,20 @@ function App() {
 
     const handleStopMonitoring = async () => {
         try {
-            await invoke("stop_monitoring", { apps: [...monitoredItems]  });
+            await invoke("stop_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(false);
         } catch (e) {
-            error(`stop_monitoring呼び出しでエラーが起きました: ${e}`);
+            error(`stop_monitoring failed: ${e}`);
         }
     };
 
     const handleClose = async () => {
         try {
-            await invoke("stop_monitoring", { apps: [...monitoredItems]  });
+            await invoke("stop_monitoring", { apps: [...monitoredItems] });
             setIsMonitoring(false);
             window.close();
         } catch (e) {
-            error(`close呼び出しでエラーが起きました: ${e}`);
+            error(`close failed: ${e}`);
         }
     };
 
@@ -260,35 +266,35 @@ function App() {
             await invoke("update_webhook_url", { url: webhookUrl });
             setCurrentWebhookUrl(webhookUrl);
         } catch (e) {
-            error(`updated_webhook_url呼び出しでエラーが起きました: ${e}`);
+            error(`update_webhook_url failed: ${e}`);
         }
     };
 
     const handleSetThreshold = async () => {
         try {
-            await invoke("update_threshold", { threshold: threshold });
+            await invoke("update_threshold", { threshold });
             setCurrentThreshold(threshold);
         } catch (e) {
-            error(`update_threshold呼び出しでエラーが起きました: ${e}`);
+            error(`update_threshold failed: ${e}`);
         }
     };
 
     const handleSetInterval = async () => {
         try {
-            await invoke("update_interval", { interval: interval });
+            await invoke("update_interval", { interval });
             setCurrentInterval(interval);
         } catch (e) {
-            error(`update_interval呼び出しでエラーが起きました: ${e}`);
+            error(`update_interval failed: ${e}`);
         }
     };
 
     return (
         <div className="container">
             <div className="page">
-                <h1 className="h1">タスクバー状態監視</h1>
+                <h1 className="h1">タスクバーアイコン監視</h1>
                 <div className="list-container">
                     <ListSection
-                        title="監視元"
+                        title="監視候補"
                         items={availableItems}
                         selectedItem={selectedAvailableItem}
                         onItemClick={handleAvailableItemClick}
@@ -296,7 +302,7 @@ function App() {
                     <MoveButtons
                         onAddClick={moveToMonitored}
                         onRemoveClick={moveToAvailable}
-                        onrefreshClick={refresh_list}
+                        onrefreshClick={refreshList}
                     />
                     <ListSection
                         title="監視対象"

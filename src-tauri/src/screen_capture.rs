@@ -112,6 +112,7 @@ fn capture_screen_area(x: i32, y: i32, width: i32, height: i32) -> Option<HBITMA
 fn hbitmap_to_image(hbitmap: HBITMAP, width: i32, height: i32) -> Option<DynamicImage> {
     info!("screen_capture.rs : hbitmap_to_imageを呼び出しました。");
     unsafe {
+        let hbitmap = HBitmapWrapper::new_hbitmap_base(hbitmap);
         let hdc_screen: HdcWrapper = HdcWrapper::new(HWND(null_mut()))?;
 
         let mut bitmap_info_uninit = MaybeUninit::<BITMAPINFO>::uninit();
@@ -136,7 +137,7 @@ fn hbitmap_to_image(hbitmap: HBITMAP, width: i32, height: i32) -> Option<Dynamic
 
         let result = GetDIBits(
             hdc_screen.as_hdc(),
-            hbitmap,
+            hbitmap.as_hbitmap(),
             0,
             height as u32,
             Some(pixels.as_mut_ptr() as *mut _),

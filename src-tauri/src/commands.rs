@@ -49,7 +49,12 @@ pub async fn start_monitoring(
             }
         };
         let interval = match interval_str.parse::<u64>() {
-            Ok(val) => val,
+            Ok(val) if val >= 100 => val,
+            Ok(_) => {
+                let message = "監視間隔は100ms以上を指定してください。".to_string();
+                error!("{}", message);
+                return Err(message);
+            }
             Err(e) => {
                 error!("監視間隔の文字列の解析に失敗しました: {}", e);
                 return Err(format!("監視間隔のパースに失敗しました: {}", e));
@@ -63,7 +68,12 @@ pub async fn start_monitoring(
             }
         };
         let threshold = match threshold_str.parse::<f32>() {
-            Ok(val) => val,
+            Ok(val) if val.is_finite() && (0.0..=1.0).contains(&val) => val,
+            Ok(_) => {
+                let message = "画像しきい値は0.0から1.0の有限数を指定してください。".to_string();
+                error!("{}", message);
+                return Err(message);
+            }
             Err(e) => {
                 error!("しきい値の文字列の解析に失敗しました: {}", e);
                 return Err(format!("しきい値のパースに失敗しました: {}", e));

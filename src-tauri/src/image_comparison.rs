@@ -109,3 +109,48 @@ fn is_orange(pixel: Rgba<u8>) -> bool {
 
     distance < threshold
 }
+
+#[cfg(test)]
+mod tests {
+    use super::has_significant_difference;
+    use image::{DynamicImage, ImageBuffer, Rgba};
+
+    fn solid_image(color: Rgba<u8>) -> DynamicImage {
+        DynamicImage::ImageRgba8(ImageBuffer::from_pixel(20, 20, color))
+    }
+
+    #[test]
+    fn unchanged_image_is_not_significant() {
+        let image = solid_image(Rgba([0, 0, 0, 255]));
+
+        assert!(!has_significant_difference(&image, &image, 0.05));
+    }
+
+    #[test]
+    fn size_change_is_significant() {
+        let image1 =
+            DynamicImage::ImageRgba8(ImageBuffer::from_pixel(20, 20, Rgba([0, 0, 0, 255])));
+        let image2 =
+            DynamicImage::ImageRgba8(ImageBuffer::from_pixel(21, 20, Rgba([0, 0, 0, 255])));
+
+        assert!(has_significant_difference(&image1, &image2, 0.05));
+    }
+
+    #[test]
+    fn orange_badge_area_and_large_diff_are_significant() {
+        let image1 = solid_image(Rgba([0, 0, 0, 255]));
+        let mut image2 = ImageBuffer::from_pixel(20, 20, Rgba([0, 0, 0, 255]));
+
+        for y in 8..12 {
+            for x in 8..12 {
+                image2.put_pixel(x, y, Rgba([255, 165, 0, 255]));
+            }
+        }
+
+        assert!(has_significant_difference(
+            &image1,
+            &DynamicImage::ImageRgba8(image2),
+            0.01
+        ));
+    }
+}

@@ -8,7 +8,11 @@ interface ListItemProps {
     onClick: () => void;
 }
 
-export const ListItem: React.FC<ListItemProps> = ({ item, isSelected, onClick }) => {
+export const ListItem: React.FC<ListItemProps> = ({
+    item,
+    isSelected,
+    onClick,
+}) => {
     return (
         <li
             className={`scroll-box ${isSelected ? "selected" : ""}`}
@@ -17,9 +21,9 @@ export const ListItem: React.FC<ListItemProps> = ({ item, isSelected, onClick })
             {item.icon && (
                 <img
                     src={`data:image/png;base64,${item.icon}`}
-                    alt="icon"
+                    alt=""
                     className="window-icon"
-                    onError={() => warn("アイコンの読み込みに失敗しました。")}
+                    onError={() => warn("failed to load icon")}
                 />
             )}
             <span className="window-title">

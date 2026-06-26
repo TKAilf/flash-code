@@ -37,6 +37,11 @@ pub async fn send_line_notification(app_name: &str, config_path: PathBuf) {
         }
     };
 
+    if channel_access_token.trim().is_empty() || target.trim().is_empty() {
+        info!("LINE notification settings are incomplete. Skipping notification.");
+        return;
+    }
+
     let message_text = format!(
         "アプリケーション「{}」のアイコンに変化がありました。",
         app_name

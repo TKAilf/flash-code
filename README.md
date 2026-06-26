@@ -1,401 +1,108 @@
-# タスクバーアイコン点滅検知アプリ
+# flash-code
 
-```Note
-この文書の英語版は ChatGPT により生成されました。
-AI 生成翻訳のため、元の日本語のニュアンスと異なる場合があります。
-ご了承ください。
-```
+Windows のタスクバーに表示されているアプリケーションアイコンを監視し、アイコン画像に変化があった場合に通知する Tauri アプリです。バックエンドは Rust、フロントエンドは React / TypeScript で実装しています。
 
-このアプリケーションは、タスクバー上の他のアプリケーションのアイコンを監視し、点滅などのビジュアル変化を検知した際に Discord Bot 経由で通知を送るツールです。バックエンドは Rust、フロントエンドは React を利用した Tauri フレームワークで開発されています。
+## 目的
 
----
+タスクバー上の通知点滅やバッジ表示など、画面を常時見ていないと気づきにくい視覚変化を検知し、Discord Webhook に通知します。設定がある場合は LINE Messaging API にも通知します。
 
-## 背景
+## 主な機能
 
-タスクバーアイコンは、アプリ側が通知を行う際のビジュアルメッセージとして機能します。例えば、新着メッセージや未読通知、ゲームのマッチングがある場合に点滅することでユーザーに知らせます。しかし、バックグラウンドで動作している場合などに通知を見逃す可能性があります。  
-このアプリは、画面を常に確認できないユーザー向けに、「点滅前」から「点滅後」へのアイコン変化を検知し、ユーザーへ通知を行います。
-
-### アイコンのイメージ変化
-
-以下にアプリケーションのアイコンがどのように変化するかを示します。
-
-- **通常状態 (点滅前):**  
-    通常時のアイコン表示  
-    ![通常状態](./images/before-icon-flash.png)
-
-- **点滅状態 (点滅後):**  
-    通知が必要な事象発生時の点滅表示  
-    ![点滅状態](./images/after-flash-icon.png)
-
----
-
-## 特徴
-
--   **タスクバーアイコン監視:** 指定したアプリケーションのアイコンをリアルタイムで監視します。
--   **点滅検知:** アイコンのビジュアル変化を検知し、点滅状態を判断します。
--   **Discord 通知:** 検知した変化を Discord Bot を通じて即時に通知します。
--   **直感的な UI:** 2 つのリストビューと「監視」や「停止」ボタンで簡単に操作可能です。
--   **軽量設計:** Rust と React による効率的な実装で、システムリソースへの負荷を最小限に抑えます。
-
----
+- タスクバーに表示されているウィンドウ一覧の取得
+- 監視対象ウィンドウの選択
+- 監視対象アイコン領域の定期キャプチャ
+- 初回キャプチャ画像と現在画像の差分比較
+- Discord Webhook 通知
+- LINE Messaging API 通知
+- 監視間隔と画像差分しきい値の設定
+- 監視停止、一覧更新、アプリ終了
 
 ## 動作環境
 
--   **対応 OS:** Windows 10 以降
--   **開発言語:**
-    -   バックエンド: Rust（最新の Stable バージョン推奨）
-    -   フロントエンド: React
--   **フレームワーク:** Tauri
--   **必要権限:** ユーザー権限（管理者権限不要）
+- Windows 10 以降
+- Node.js 20 以降
+- Rust stable
+- npm
 
----
+管理者権限は前提にしていません。ただし、対象アプリやセキュリティソフトの制限により、ウィンドウ情報や画面キャプチャを取得できない場合があります。
 
-## インストール手順
+## セットアップ
 
-1. **リポジトリのクローン:**
+```powershell
+npm install
+cd src-tauri
+cargo build
+cd ..
+npm run tauri dev
+```
 
-    ```
-    git clone https://github.com/TKAilf/flash-code.git
-    ```
+PowerShell の実行ポリシーで `npm` が止まる場合は、Windows の `npm.cmd` を使います。
 
-2. **ディレクトリの移動:**
-
-    ```
-    cd flash-code
-    ```
-
-3. **依存関係のインストール:**
-
-    - **バックエンド:**
-        ```
-        cd src-tauri
-        cargo install
-        ```
-    - **フロントエンド:**
-        ```
-        cd ../
-        npm install
-        ```
-
-4. **アプリケーションのビルドと実行:**
-
-    ```
-    npm run tauri dev
-    ```
-
-5. **Discord Bot 設定:**  
-    サービス内の Discord Bot 用テキストエリアに Webhook URL を入力し、設定ボタンを押下してください。
-
----
+```powershell
+npm.cmd install
+npm.cmd run tauri dev
+```
 
 ## 使い方
 
-1. **アプリ起動:**  
-    上記のコマンドで起動します。
+1. アプリを起動します。
+2. 左側の「監視候補」から監視したいウィンドウを選び、追加ボタンで右側の「監視対象」に移します。
+3. Discord Webhook URL を設定します。
+4. 必要に応じて画像しきい値と監視間隔を設定します。
+5. 「監視」または「全てを監視」を押します。
+6. アイコン変化が検知されると通知が送信されます。
+7. 「監視停止」または「閉じる」で監視を停止します。
 
-2. **監視対象の設定:**  
-    左側のリストビューに現在のタスクバーアプリが表示されます。監視したいアプリを選び、右側のリストビューに移動します。
+## 設定
 
-3. **Discord Bot 設定:**  
-    Discord Bot の Webhook URL を入力後、設定ボタンを押してください。
+設定ファイルは Tauri のアプリ設定ディレクトリに `appsettings.json` として作成されます。
 
-4. **監視の開始:**  
-    「全てを監視」または「監視」ボタンで、右リストのアプリの監視が開始されます。
+```json
+{
+    "DISCORD_WEBHOOK_URL": "",
+    "LINE_CHANNEL_ACCESS_TOKEN": "",
+    "LINE_TARGET": "",
+    "THRESHOLD": "0.050",
+    "INTERVAL": "1000"
+}
+```
 
-5. **通知確認:**  
-    アイコンの変化が検知されると、設定した Discord チャンネルへメッセージが送信されます。
+| 項目                        | 内容                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------- |
+| `DISCORD_WEBHOOK_URL`       | Discord Webhook URL。空の場合、Discord 通知は送信しません。                        |
+| `LINE_CHANNEL_ACCESS_TOKEN` | LINE Messaging API のチャネルアクセストークン。空の場合、LINE 通知は送信しません。 |
+| `LINE_TARGET`               | LINE の送信先 ID。空の場合、LINE 通知は送信しません。                              |
+| `THRESHOLD`                 | 画像差分しきい値。`0.0` から `1.0` の有限数を指定します。                          |
+| `INTERVAL`                  | 監視間隔。ミリ秒単位で、`100` 以上を指定します。                                   |
 
-6. **監視の停止と終了:**  
-    「監視停止」または「閉じる」ボタンで、すべての監視が停止されます。
+## 検知方式
 
----
+監視開始時に対象アイコン領域の初期画像を取得し、指定間隔ごとに現在画像と比較します。画像サイズが異なる場合は変化ありと判定します。画像サイズが同じ場合は RGB 差分を正規化し、しきい値を超え、かつ特定領域のオレンジ色比率が条件を満たす場合に変化ありと判定します。
 
-## 設定項目
+これはタスクバー通知の点滅を想定した簡易検知です。すべてのアプリやすべての通知表現に対して正確に動作する保証はありません。
 
--   **監視間隔の調整:**  
-     「監視時間」の数値を変更することで、画像キャプチャの間隔（ミリ秒単位）を調整できます。
+## プライバシー
 
--   **しきい値の設定:**  
-     「画像のしきい値」の変更により、検知精度を調整可能です。
+このアプリは、タスクバーアイコンの画像変化を検知するために画面上のアイコン領域をキャプチャします。通知時には検知したアプリ名を Discord または LINE に送信します。設定値が空の通知先には送信しません。
 
----
+## 既知の制限
 
-## 注意事項
+- タスクバー上のボタン探索はウィンドウタイトルとの一致に依存します。
+- タイトルが空、短すぎる、またはタスクバー表示名と一致しない場合は検知できないことがあります。
+- 監視中は対象ウィンドウを最小化し、検知時に復元します。
+- 高頻度の監視間隔は CPU / GDI リソース負荷を増やします。
+- Linux / macOS は対象外です。
 
--   **プライバシー:**  
-     本アプリはタスクバーアイコンのビジュアル変化のみを監視し、個人情報は収集・送信しません。
+## 検証
 
--   **システム負荷:**  
-     定期的な画像キャプチャと比較により、CPU 使用率が上昇する可能性があります。高負荷の場合は監視間隔(monitor_interval)を増やしてください。
-
--   **セキュリティソフトの競合:**  
-     一部のセキュリティソフトがこのアプリの動作を制限する場合、除外リストに追加してください。
-
----
+```powershell
+npm.cmd run build
+cd src-tauri
+cargo fmt --check
+cargo check
+cargo test
+```
 
 ## ライセンス
 
-MIT ライセンスの下で提供されています。詳細は [LICENSE](./LICENSE) ファイルをご覧ください。
-
----
-
-## 貢献
-
-バグ報告や機能提案は Issue Tracker へ。プルリクエストも歓迎します。
-
----
-
-## 開発者向け情報
-
-### 必要な環境
-
--   **バックエンド:**
-
-    -   Rust（最新の Stable バージョン）
-    -   Cargo
-
--   **フロントエンド:**
-
-    -   Node.js 20 以上
-    -   npm または yarn
-
--   **その他:**
-    -   Tauri CLI
-        ```
-        cargo install tauri-cli
-        ```
-
-### ビルド手順
-
-1. **リポジトリのクローン:**
-
-    ```
-    git clone https://github.com/TKAilf/flash-code.git
-    ```
-
-2. **依存関係のインストール:**
-
-    ```
-    cd flash-code
-    npm install
-    cd src-tauri
-    cargo build
-    ```
-
-3. **アプリケーションのビルド:**
-
-    ```
-    npm run tauri build
-    ```
-
-4. **実行ファイルの確認:**  
-    ビルド後、`src-tauri/target/release` に実行ファイルが生成されます。
-
----
-
-## 連絡先
-
-質問・お問い合わせは以下のメールアドレスまで:
-
--   **Email:** ktoshiki0511@yahoo.co.jp
-
----
-
-**最終更新日:** 2025 年 01 月 24 日
-
----
-
-# Taskbar Icon Flash Detector (Translated using ChatGPT)
-
-This section provides the English version of the document.
-
----
-
-## Overview
-
-This application monitors the icons of other applications displayed on the taskbar and sends notifications via a Discord Bot when visual changes, such as flashing, are detected. It is developed using the Tauri framework with Rust as its backend and React as its frontend.
-
----
-
-## Features
-
--   **Taskbar Icon Monitoring:**  
-     Real-time monitoring of specified taskbar application icons.
-
--   **Flash Detection:**  
-     Identifies changes in the icons to determine if they are flashing.
-
--   **Discord Notifications:**  
-     Sends immediate alerts via a Discord Bot when changes are detected.
-
--   **Intuitive UI:**  
-     Simple operation with two list views and buttons like "Monitor" and "Stop".
-
--   **Lightweight Design:**  
-     Efficiently built using Rust and React to minimize system resource usage.
-
----
-
-## System Requirements
-
--   **Supported OS:** Windows 10 or later
--   **Languages:**
-    -   Backend: Rust (latest stable version recommended)
-    -   Frontend: React
--   **Framework:** Tauri
--   **Permissions:** User privileges (administrator rights not required)
-
----
-
-## Installation
-
-1. **Clone the Repository:**
-
-    ```
-    git clone https://github.com/TKAilf/flash-code.git
-    ```
-
-2. **Navigate to the Project Directory:**
-
-    ```
-    cd flash-code
-    ```
-
-3. **Install Dependencies:**
-
-    - **Backend:**
-        ```
-        cd src-tauri
-        cargo install
-        ```
-    - **Frontend:**
-        ```
-        cd ../
-        npm install
-        ```
-
-4. **Build and Run the Application:**
-
-    ```
-    npm run tauri dev
-    ```
-
-5. **Configure the Discord Bot:**  
-    Enter your Webhook URL in the designated text area within the service, then click the settings button.
-
----
-
-## Usage
-
-1. **Start the Application:**  
-    Launch it using the command above.
-
-2. **Set Monitoring Targets:**  
-    The left list view displays currently active taskbar applications. Select the applications you wish to monitor and move them to the right list view.
-
-3. **Configure the Discord Bot:**  
-    Input the Discord Bot Webhook URL and click the settings button.
-
-4. **Begin Monitoring:**  
-    Click “Monitor All” or “Monitor” to start monitoring the selected applications.
-
-5. **Check Notifications:**  
-    When a change is detected in the taskbar icon, a message is sent to the configured Discord channel.
-
-6. **Stop Monitoring:**  
-    Use the “Stop Monitoring” or “Close” button to halt all monitoring.
-
----
-
-## Settings
-
--   **Adjust Monitoring Interval:**  
-     Change the value in the "Monitoring Time" field (in milliseconds) to adjust the capture frequency.
-
--   **Threshold Settings:**  
-     Modify the "Image Threshold" to alter detection accuracy.
-
----
-
-## Notes
-
--   **Privacy Considerations:**  
-     The application only monitors visual changes; no personal information is collected or transmitted.
-
--   **System Load:**  
-     Periodic image capturing and comparison might increase CPU usage. Increase the monitor_interval value if needed.
-
--   **Security Software Conflicts:**  
-     If the application is restricted by security software, add it to your exclusion list.
-
----
-
-## License
-
-This application is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
----
-
-## Contributing
-
-Bug reports, feature suggestions, and pull requests are welcome via the Issue Tracker.
-
----
-
-## Developer Information
-
-### Required Environment
-
--   **Backend:**
-
-    -   Rust (latest stable version)
-    -   Cargo
-
--   **Frontend:**
-
-    -   Node.js 20 or later
-    -   npm or yarn
-
--   **Other:**
-    -   Tauri CLI
-        ```
-        cargo install tauri-cli
-        ```
-
-### Build Procedure
-
-1. **Clone the Repository:**
-
-    ```
-    git clone https://github.com/TKAilf/flash-code.git
-    ```
-
-2. **Install Dependencies:**
-
-    ```
-    cd flash-code
-    npm install
-    cd src-tauri
-    cargo build
-    ```
-
-3. **Build the Application:**
-
-    ```
-    npm run tauri build
-    ```
-
-4. **Check the Executable:**  
-    Upon a successful build, the executable will be located in `src-tauri/target/release`.
-
----
-
-## Contact
-
-For any questions or inquiries, please contact:
-
--   **Email:** ktoshiki0511@yahoo.co.jp
-
----
-
-**Last Updated:** January 24, 2025
+MIT License です。詳細は [LICENSE](./LICENSE) を参照してください。
