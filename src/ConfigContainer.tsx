@@ -1,4 +1,5 @@
 import React from "react";
+import { FaQuestionCircle } from "react-icons/fa";
 
 interface ConfigContainerProps {
     webhookUrl: string;
@@ -16,6 +17,11 @@ interface ConfigContainerProps {
     handleSetLineConfig: () => void;
     currentLineChannelAccessTokenConfigured: boolean;
     currentLineTarget: string;
+    minimizeOnMonitorStart: boolean;
+    isMonitoring: boolean;
+    handleMinimizeOnMonitorStartChange: (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => void;
     threshold: string;
     handleThresholdTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleThresholdSelectChange: (
@@ -46,6 +52,9 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     handleSetLineConfig,
     currentLineChannelAccessTokenConfigured,
     currentLineTarget,
+    minimizeOnMonitorStart,
+    isMonitoring,
+    handleMinimizeOnMonitorStartChange,
     threshold,
     handleThresholdTextChange,
     handleThresholdSelectChange,
@@ -61,6 +70,9 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     const toggleThresholdMode = () => setIsDetailedThreshold((prev) => !prev);
     const [isDetailedInterval, setIsDetailedInterval] = React.useState(false);
     const toggleIntervalMode = () => setIsDetailedInterval((prev) => !prev);
+    const [isMinimizeHelpOpen, setIsMinimizeHelpOpen] =
+        React.useState(false);
+    const minimizeHelpId = "minimize-on-monitor-start-help";
 
     return (
         <div className="cover-config-container">
@@ -95,6 +107,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                 <input
                                     type="checkbox"
                                     checked={lineEnabled}
+                                    aria-label="LINE Bot を有効にする"
                                     onChange={handleLineEnabledChange}
                                 />
                             </label>
@@ -140,13 +153,76 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                     </div>
 
                     <div className="title-toggle-group">
-                        <span className="config-title">3. Image threshold</span>
+                        <span className="config-title">
+                            3. Minimize target on start
+                        </span>
+                        <div className="help-popover">
+                            <button
+                                type="button"
+                                className="help-button"
+                                aria-label="監視開始時の最小化について"
+                                aria-describedby={minimizeHelpId}
+                                aria-expanded={isMinimizeHelpOpen}
+                                aria-controls={minimizeHelpId}
+                                onClick={() =>
+                                    setIsMinimizeHelpOpen((prev) => !prev)
+                                }
+                                onFocus={() => setIsMinimizeHelpOpen(true)}
+                                onBlur={() => setIsMinimizeHelpOpen(false)}
+                                onMouseEnter={() =>
+                                    setIsMinimizeHelpOpen(true)
+                                }
+                                onMouseLeave={() =>
+                                    setIsMinimizeHelpOpen(false)
+                                }
+                            >
+                                <FaQuestionCircle size={18} />
+                            </button>
+                            <div
+                                id={minimizeHelpId}
+                                className={`help-content ${
+                                    isMinimizeHelpOpen ? "open" : ""
+                                }`}
+                                role="tooltip"
+                                aria-hidden={!isMinimizeHelpOpen}
+                            >
+                                このアプリはタスクバーアイコンの視覚変化を画像として検知します。対象アプリがアクティブなままだと通知点滅が発生しない場合があるため、既定では監視開始時に対象を最小化します。作業中のウィンドウ状態を変えたくない場合は Off にしてください。
+                            </div>
+                        </div>
+                        <div className="toggle-group">
+                            <span className="toggle-text-before">Off</span>
+                            <label className="toggle-button">
+                                <input
+                                    type="checkbox"
+                                    checked={minimizeOnMonitorStart}
+                                    disabled={isMonitoring}
+                                    aria-label="監視開始時に対象ウィンドウを最小化する"
+                                    onChange={
+                                        handleMinimizeOnMonitorStartChange
+                                    }
+                                />
+                            </label>
+                            <span className="toggle-text-after">On</span>
+                        </div>
+                    </div>
+                    <div className="config-group">
+                        <div className="current-value">
+                            Current behavior:{" "}
+                            {minimizeOnMonitorStart
+                                ? "Minimize monitored windows when monitoring starts"
+                                : "Keep monitored windows as they are"}
+                        </div>
+                    </div>
+
+                    <div className="title-toggle-group">
+                        <span className="config-title">4. Image threshold</span>
                         <div className="toggle-group">
                             <span className="toggle-text-before">Simple</span>
                             <label className="toggle-button">
                                 <input
                                     type="checkbox"
                                     checked={isDetailedThreshold}
+                                    aria-label="画像しきい値の詳細入力を有効にする"
                                     onChange={toggleThresholdMode}
                                 />
                             </label>
@@ -186,13 +262,14 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                     </div>
 
                     <div className="title-toggle-group">
-                        <span className="config-title">4. Interval (ms)</span>
+                        <span className="config-title">5. Interval (ms)</span>
                         <div className="toggle-group">
                             <span className="toggle-text-before">Simple</span>
                             <label className="toggle-button">
                                 <input
                                     type="checkbox"
                                     checked={isDetailedInterval}
+                                    aria-label="監視間隔の詳細入力を有効にする"
                                     onChange={toggleIntervalMode}
                                 />
                             </label>

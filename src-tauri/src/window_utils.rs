@@ -60,11 +60,13 @@ pub struct ConfigState {
 ///
 pub struct MonitorState {
     pub tasks: Mutex<HashMap<String, JoinHandle<()>>>,
+    restore_windows_on_stop: Mutex<bool>,
 }
 impl MonitorState {
     pub fn new() -> Self {
         Self {
             tasks: Mutex::new(HashMap::new()),
+            restore_windows_on_stop: Mutex::new(true),
         }
     }
 
@@ -73,6 +75,12 @@ impl MonitorState {
         let mut tasks = self.tasks.lock().await;
         for (_, handle) in tasks.drain() {
             handle.abort();
+        }
+
+        let restore_windows = *self.restore_windows_on_stop.lock().await;
+        if !restore_windows {
+            info!("停止時のウィンドウ復元は無効です。");
+            return;
         }
 
         for app in apps {
@@ -93,11 +101,17 @@ impl MonitorState {
         }
     }
 
+    pub async fn set_restore_windows_on_stop(&self, restore_windows: bool) {
+        let mut restore_windows_on_stop = self.restore_windows_on_stop.lock().await;
+        *restore_windows_on_stop = restore_windows;
+    }
+
     pub async fn monitor_target<'a>(
         &self,
         app_info: AppInfo,
         interval: u64,
         threshold: f32,
+        minimize_on_start: bool,
         config_state: State<'a, ConfigState>,
         app_handle: tauri::AppHandle,
     ) {
@@ -105,7 +119,15 @@ impl MonitorState {
         let app_name = app_info.name.clone();
         let config_path = config_state.path.clone();
         let handle = tauri::async_runtime::spawn(async move {
-            monitor_app_icon(app_info, interval, threshold, config_path, app_handle).await;
+            monitor_app_icon(
+                app_info,
+                interval,
+                threshold,
+                minimize_on_start,
+                config_path,
+                app_handle,
+            )
+            .await;
         });
         self.tasks.lock().await.insert(app_name, handle);
     }
@@ -435,7 +457,8 @@ pub fn initilize_config_file(config_file: &Path) {
 "LINE_CHANNEL_ACCESS_TOKEN": "",
 "LINE_TARGET": "",
 "THRESHOLD": "0.050",
-"INTERVAL": "1000"
+"INTERVAL": "1000",
+"MINIMIZE_ON_MONITOR_START": "true"
 }"#,
     ) {
         Ok(_) => info!("設定ファイルを初期化しました。"),

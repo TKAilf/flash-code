@@ -33,6 +33,7 @@ function App() {
     const [currentThreshold, setCurrentThreshold] = useState<string>("");
     const [currentInterval, setCurrentInterval] = useState<string>("");
     const [lineEnabled, setLineEnabled] = useState(false);
+    const [minimizeOnMonitorStart, setMinimizeOnMonitorStart] = useState(true);
     const [
         currentLineChannelAccessTokenConfigured,
         setCurrentLineChannelAccessTokenConfigured,
@@ -80,10 +81,14 @@ function App() {
                 "get_line_channel_access_token_configured"
             );
             const lineTargetValue: string = await invoke("get_line_target");
+            const minimizeOnStartValue: boolean = await invoke(
+                "get_minimize_on_monitor_start"
+            );
             setCurrentWebhookUrl(url);
             setCurrentThreshold(threshold);
             setCurrentInterval(interval);
             setLineEnabled(lineEnabledValue === "true");
+            setMinimizeOnMonitorStart(minimizeOnStartValue);
             setCurrentLineChannelAccessTokenConfigured(lineTokenConfigured);
             setCurrentLineTarget(lineTargetValue);
             setLineTarget(lineTargetValue);
@@ -292,6 +297,23 @@ function App() {
         }
     };
 
+    const handleMinimizeOnMonitorStartChange = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const enabled = event.target.checked;
+        try {
+            await invoke("update_minimize_on_monitor_start", {
+                enabled,
+            });
+            setMinimizeOnMonitorStart(enabled);
+        } catch (e) {
+            logFrontend(
+                "error",
+                `update_minimize_on_monitor_start failed: ${e}`
+            );
+        }
+    };
+
     const handleLineChannelAccessTokenChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -393,6 +415,11 @@ function App() {
                         currentLineChannelAccessTokenConfigured
                     }
                     currentLineTarget={currentLineTarget}
+                    minimizeOnMonitorStart={minimizeOnMonitorStart}
+                    isMonitoring={isMonitoring}
+                    handleMinimizeOnMonitorStartChange={
+                        handleMinimizeOnMonitorStartChange
+                    }
                     threshold={threshold}
                     handleThresholdTextChange={handleThresholdTextChange}
                     handleThresholdSelectChange={handleThresholdSelectChange}

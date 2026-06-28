@@ -39,7 +39,17 @@ pub async fn start_monitoring(
     apps: Vec<AppInfo>,
 ) -> Result<(), String> {
     info!("start_monitoringを呼び出しました。");
+    let minimize_on_start = match get_minimize_on_monitor_start(config_state.clone()).await {
+        Ok(val) => val,
+        Err(e) => {
+            error!("最小化設定の取得に失敗しました: {}", e);
+            return Err(e);
+        }
+    };
     monitor_state.stop_all(apps.clone()).await;
+    monitor_state
+        .set_restore_windows_on_stop(minimize_on_start)
+        .await;
     for app in apps {
         let interval_str = match get_interval(config_state.clone()).await {
             Ok(val) => val,
@@ -84,6 +94,7 @@ pub async fn start_monitoring(
                 app,
                 interval,
                 threshold,
+                minimize_on_start,
                 config_state.clone(),
                 app_handle.clone(),
             )
@@ -371,6 +382,20 @@ pub async fn update_line_enabled(
 }
 
 #[tauri::command]
+pub async fn update_minimize_on_monitor_start(
+    config_state: State<'_, ConfigState>,
+    enabled: bool,
+) -> Result<(), String> {
+    match crate::config_manager::update_minimize_on_monitor_start(config_state, enabled).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("最小化設定の更新に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
 pub async fn update_line_channel_access_token(
     config_state: State<'_, ConfigState>,
     token: String,
@@ -473,6 +498,19 @@ pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String
         Ok(url) => Ok(url),
         Err(e) => {
             error!("監視間隔の取得に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_minimize_on_monitor_start(
+    config_state: State<'_, ConfigState>,
+) -> Result<bool, String> {
+    match crate::config_manager::get_minimize_on_monitor_start(config_state).await {
+        Ok(enabled) => Ok(enabled),
+        Err(e) => {
+            error!("最小化設定の取得に失敗しました: {}", e);
             Err(e)
         }
     }

@@ -46,24 +46,28 @@ pub async fn monitor_app_icon(
     app_info: AppInfo,
     interval: u64,
     threshold: f32,
+    minimize_on_start: bool,
     config_path: PathBuf,
     app_handle: tauri::AppHandle,
 ) {
     info!("monitor_app_iconを呼び出しました。");
-    // 対象ウィンドウの最小化
-    unsafe {
-        let result = SendMessageW(
-            HWND(app_info.hwnd as *mut _),
-            WM_SYSCOMMAND,
-            WPARAM(SC_MINIMIZE as usize),
-            LPARAM(0),
-        );
-        if result == LRESULT(0) {
-            info!("ウィンドウを最小化しました。(返り値: {:?})", result);
-        } else {
-            error!("ウィンドウの最小化に失敗しました。: {:?}", result);
-            return;
+    if minimize_on_start {
+        unsafe {
+            let result = SendMessageW(
+                HWND(app_info.hwnd as *mut _),
+                WM_SYSCOMMAND,
+                WPARAM(SC_MINIMIZE as usize),
+                LPARAM(0),
+            );
+            if result == LRESULT(0) {
+                info!("ウィンドウを最小化しました。(返り値: {:?})", result);
+            } else {
+                error!("ウィンドウの最小化に失敗しました。: {:?}", result);
+                return;
+            }
         }
+    } else {
+        info!("監視開始時の最小化は無効です。");
     }
 
     // 初期状態のアイコン画像を取得
@@ -97,18 +101,20 @@ pub async fn monitor_app_icon(
             send_discord_notification(&app_info.name, config_path.clone()).await;
             send_line_notification(&app_info.name, config_path.clone()).await;
 
-            unsafe {
-                let result = SendMessageW(
-                    HWND(app_info.hwnd as *mut _),
-                    WM_SYSCOMMAND,
-                    WPARAM(SC_RESTORE as usize),
-                    LPARAM(0),
-                );
-                if result == LRESULT(0) {
-                    info!("ウィンドウを復元しました。 (返り値: {:?})", result);
-                } else {
-                    error!("ウィンドウの復元に失敗しました。: {:?}", result);
-                    return;
+            if minimize_on_start {
+                unsafe {
+                    let result = SendMessageW(
+                        HWND(app_info.hwnd as *mut _),
+                        WM_SYSCOMMAND,
+                        WPARAM(SC_RESTORE as usize),
+                        LPARAM(0),
+                    );
+                    if result == LRESULT(0) {
+                        info!("ウィンドウを復元しました。 (返り値: {:?})", result);
+                    } else {
+                        error!("ウィンドウの復元に失敗しました。: {:?}", result);
+                        return;
+                    }
                 }
             }
 

@@ -76,6 +76,20 @@ pub async fn update_interval(
     update_config_value(config_state, "INTERVAL", &interval, "Interval updated").await
 }
 
+/// 監視開始時に対象ウィンドウを最小化するかどうかを設定ファイルへ保存します。
+pub async fn update_minimize_on_monitor_start(
+    config_state: State<'_, ConfigState>,
+    enabled: bool,
+) -> Result<(), String> {
+    update_config_value(
+        config_state,
+        "MINIMIZE_ON_MONITOR_START",
+        if enabled { "true" } else { "false" },
+        "Minimize on monitor start flag updated",
+    )
+    .await
+}
+
 /// LINE 通知の有効状態を設定ファイルへ保存します。
 ///
 /// # 概要
@@ -177,6 +191,17 @@ pub async fn get_threshold(config_state: State<'_, ConfigState>) -> Result<Strin
 /// * `Err(String)` - 設定ファイルの読み込み、JSON 解析、またはキー取得に失敗した場合。
 pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String, String> {
     get_config_value(config_state, "INTERVAL").await
+}
+
+/// 監視開始時に対象ウィンドウを最小化するかどうかを設定ファイルから取得します。
+///
+/// 既存ユーザーの設定ファイルにキーが存在しない場合は、従来挙動を保つため `"true"` を返します。
+pub async fn get_minimize_on_monitor_start(
+    config_state: State<'_, ConfigState>,
+) -> Result<bool, String> {
+    let value =
+        get_config_value_or_default(config_state, "MINIMIZE_ON_MONITOR_START", "true").await?;
+    parse_bool_config_value("MINIMIZE_ON_MONITOR_START", &value)
 }
 
 /// LINE 通知の有効状態を設定ファイルから取得します。
@@ -387,4 +412,33 @@ fn write_config_file(config_path: &str, json_value: &Value) -> Result<(), String
         error!("Failed to write config file: {:?}", e);
         format!("write error: {:?}", e)
     })
+}
+
+fn parse_bool_config_value(key: &str, value: &str) -> Result<bool, String> {
+    match value {
+        "true" => Ok(true),
+        "false" => Ok(false),
+        _ => Err(format!(
+            "{} must be either \"true\" or \"false\", but got {:?}",
+            key, value
+        )),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_bool_config_value;
+
+    #[test]
+    fn parse_bool_config_value_accepts_true_and_false() {
+        assert_eq!(parse_bool_config_value("FLAG", "true"), Ok(true));
+        assert_eq!(parse_bool_config_value("FLAG", "false"), Ok(false));
+    }
+
+    #[test]
+    fn parse_bool_config_value_rejects_non_canonical_values() {
+        assert!(parse_bool_config_value("FLAG", "TRUE").is_err());
+        assert!(parse_bool_config_value("FLAG", "").is_err());
+        assert!(parse_bool_config_value("FLAG", "foo").is_err());
+    }
 }

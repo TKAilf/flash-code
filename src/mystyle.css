@@ -352,7 +352,68 @@ button:focus {
     left: 30px;
 }
 .config-container .toggle-group .toggle-button input {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+    white-space: nowrap;
+}
+.config-container .toggle-group .toggle-button:focus-within {
+    box-shadow: 0 0 5px 1px var(--color-border);
+}
+.config-container .toggle-group .toggle-button:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+.config-container .help-popover {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+}
+.config-container .help-button {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: var(--border-radius-circle);
+    background-color: var(--color-bg-select);
+    color: var(--color-text);
+}
+.config-container .help-button:hover,
+.config-container .help-button:focus {
+    background-color: var(--color-hover);
+}
+.config-container .help-content {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 10px);
+    z-index: 5;
+    width: min(420px, 70vw);
+    padding: 12px 14px;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--border-radius-small);
+    background-color: #1f1f1f;
+    color: var(--color-text);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+    line-height: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    text-align: left;
+    transform: translate(-50%, -4px);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    white-space: normal;
+}
+.config-container .help-content.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
 }
 .config-container .config-group {
     display: flex;
