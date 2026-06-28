@@ -8,7 +8,7 @@ pub async fn send_line_notification(app_name: &str, config_path: PathBuf) {
     let config_data = match fs::read_to_string(&config_path) {
         Ok(content) => content,
         Err(e) => {
-            error!("appsettings.jsonの読み込みに失敗しました: {:?}", e);
+            error!("Failed to read appsettings.json: {:?}", e);
             return;
         }
     };
@@ -16,36 +16,25 @@ pub async fn send_line_notification(app_name: &str, config_path: PathBuf) {
     let config: Value = match serde_json::from_str(&config_data) {
         Ok(json) => json,
         Err(e) => {
-            error!("appsettings.jsonの解析に失敗しました: {:?}", e);
+            error!("Failed to parse appsettings.json: {:?}", e);
             return;
         }
     };
 
-    let channel_access_token = match config["LINE_CHANNEL_ACCESS_TOKEN"].as_str() {
-        Some(token) => token.to_string(),
-        None => {
-            error!("設定ファイルにLINE_CHANNEL_ACCESS_TOKENが設定されていません。");
-            return;
-        }
-    };
+    if config["LINE_ENABLED"].as_str().unwrap_or("false") != "true" {
+        info!("LINE notification is disabled. Skipping notification.");
+        return;
+    }
 
-    let target = match config["LINE_TARGET"].as_str() {
-        Some(target) => target,
-        None => {
-            error!("LINE_TARGETが設定されていません。");
-            return;
-        }
-    };
+    let channel_access_token = config["LINE_CHANNEL_ACCESS_TOKEN"].as_str().unwrap_or("");
+    let target = config["LINE_TARGET"].as_str().unwrap_or("");
 
     if channel_access_token.trim().is_empty() || target.trim().is_empty() {
         info!("LINE notification settings are incomplete. Skipping notification.");
         return;
     }
 
-    let message_text = format!(
-        "アプリケーション「{}」のアイコンに変化がありました。",
-        app_name
-    );
+    let message_text = format!("Application \"{}\" taskbar icon changed.", app_name);
 
     let payload = serde_json::json!({
         "to": target,
@@ -69,16 +58,16 @@ pub async fn send_line_notification(app_name: &str, config_path: PathBuf) {
     match response {
         Ok(response) => {
             if response.status().is_success() {
-                info!("通知を送信しました。");
+                info!("LINE notification sent.");
             } else {
                 warn!(
-                    "通知の送信に失敗しました。ステータスコード: {}",
+                    "LINE notification failed with status code: {}",
                     response.status()
                 );
             }
         }
         Err(e) => {
-            error!("通知の送信中にエラーが発生しました: {:?}", e);
+            error!("Failed to send LINE notification: {:?}", e);
         }
     }
 }

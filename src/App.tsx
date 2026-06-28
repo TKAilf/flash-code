@@ -26,9 +26,18 @@ function App() {
     const [webhookUrl, setWebhookUrl] = useState<string>("");
     const [threshold, setThreshold] = useState<string>("");
     const [interval, setInterval] = useState<string>("");
+    const [lineChannelAccessToken, setLineChannelAccessToken] =
+        useState<string>("");
+    const [lineTarget, setLineTarget] = useState<string>("");
     const [currentWebhookUrl, setCurrentWebhookUrl] = useState<string>("");
     const [currentThreshold, setCurrentThreshold] = useState<string>("");
     const [currentInterval, setCurrentInterval] = useState<string>("");
+    const [lineEnabled, setLineEnabled] = useState(false);
+    const [
+        currentLineChannelAccessTokenConfigured,
+        setCurrentLineChannelAccessTokenConfigured,
+    ] = useState(false);
+    const [currentLineTarget, setCurrentLineTarget] = useState<string>("");
     const [isMonitoring, setIsMonitoring] = useState(false);
     const monitoredItemsRef = useRef<AppInfo[]>([]);
 
@@ -66,9 +75,18 @@ function App() {
             const url: string = await invoke("get_webhook_url");
             const threshold: string = await invoke("get_threshold");
             const interval: string = await invoke("get_interval");
+            const lineEnabledValue: string = await invoke("get_line_enabled");
+            const lineTokenConfigured: boolean = await invoke(
+                "get_line_channel_access_token_configured"
+            );
+            const lineTargetValue: string = await invoke("get_line_target");
             setCurrentWebhookUrl(url);
             setCurrentThreshold(threshold);
             setCurrentInterval(interval);
+            setLineEnabled(lineEnabledValue === "true");
+            setCurrentLineChannelAccessTokenConfigured(lineTokenConfigured);
+            setCurrentLineTarget(lineTargetValue);
+            setLineTarget(lineTargetValue);
         } catch (e) {
             logFrontend("error", `get_config failed: ${e}`);
         }
@@ -260,6 +278,32 @@ function App() {
         setInterval(event.target.value);
     };
 
+    const handleLineEnabledChange = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const enabled = event.target.checked;
+        try {
+            await invoke("update_line_enabled", {
+                enabled: enabled ? "true" : "false",
+            });
+            setLineEnabled(enabled);
+        } catch (e) {
+            logFrontend("error", `update_line_enabled failed: ${e}`);
+        }
+    };
+
+    const handleLineChannelAccessTokenChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setLineChannelAccessToken(event.target.value);
+    };
+
+    const handleLineTargetChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setLineTarget(event.target.value);
+    };
+
     const handleSetWebhookUrl = async () => {
         try {
             await invoke("update_webhook_url", { url: webhookUrl });
@@ -284,6 +328,27 @@ function App() {
             setCurrentInterval(interval);
         } catch (e) {
             logFrontend("error", `update_interval failed: ${e}`);
+        }
+    };
+
+    const handleSetLineConfig = async () => {
+        try {
+            const trimmedLineChannelAccessToken =
+                lineChannelAccessToken.trim();
+            const trimmedLineTarget = lineTarget.trim();
+
+            if (trimmedLineChannelAccessToken !== "") {
+                await invoke("update_line_channel_access_token", {
+                    token: trimmedLineChannelAccessToken,
+                });
+                setCurrentLineChannelAccessTokenConfigured(true);
+                setLineChannelAccessToken("");
+            }
+            await invoke("update_line_target", { target: trimmedLineTarget });
+            setLineTarget(trimmedLineTarget);
+            setCurrentLineTarget(trimmedLineTarget);
+        } catch (e) {
+            logFrontend("error", `update_line_config failed: ${e}`);
         }
     };
 
@@ -315,6 +380,19 @@ function App() {
                     handleWebhookUrlChange={handleWebhookUrlChange}
                     handleSetWebhookUrl={handleSetWebhookUrl}
                     currentWebhookUrl={currentWebhookUrl}
+                    lineEnabled={lineEnabled}
+                    handleLineEnabledChange={handleLineEnabledChange}
+                    lineChannelAccessToken={lineChannelAccessToken}
+                    handleLineChannelAccessTokenChange={
+                        handleLineChannelAccessTokenChange
+                    }
+                    lineTarget={lineTarget}
+                    handleLineTargetChange={handleLineTargetChange}
+                    handleSetLineConfig={handleSetLineConfig}
+                    currentLineChannelAccessTokenConfigured={
+                        currentLineChannelAccessTokenConfigured
+                    }
+                    currentLineTarget={currentLineTarget}
                     threshold={threshold}
                     handleThresholdTextChange={handleThresholdTextChange}
                     handleThresholdSelectChange={handleThresholdSelectChange}

@@ -55,6 +55,10 @@ npm.cmd run tauri build
 
 生成物は `src-tauri\target\release\bundle\msi` に出力されます。
 
+インストール済みのアプリを更新する場合は、`package.json`、`src-tauri/Cargo.toml`、`src-tauri/tauri.conf.json` のバージョンを上げてから MSI を作成してください。同じバージョンの MSI を再実行しただけでは、Windows Installer の扱いにより古い EXE が残る場合があります。
+
+インストール後の起動で `localhost` への接続拒否が表示される場合は、開発用ビルドまたは古いインストール済み EXE が起動されています。いったん「アプリと機能」から `flash-code` をアンインストールし、上記コマンドで作成した最新バージョンの MSI をインストールしてください。
+
 ## 使い方
 
 1. アプリを起動します。

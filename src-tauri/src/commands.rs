@@ -357,6 +357,48 @@ pub async fn update_interval(
 /// ```
 ///
 #[tauri::command]
+pub async fn update_line_enabled(
+    config_state: State<'_, ConfigState>,
+    enabled: String,
+) -> Result<(), String> {
+    match crate::config_manager::update_line_enabled(config_state, enabled).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("LINE enabled flag update failed: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn update_line_channel_access_token(
+    config_state: State<'_, ConfigState>,
+    token: String,
+) -> Result<(), String> {
+    match crate::config_manager::update_line_channel_access_token(config_state, token).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("LINE channel access token update failed: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn update_line_target(
+    config_state: State<'_, ConfigState>,
+    target: String,
+) -> Result<(), String> {
+    match crate::config_manager::update_line_target(config_state, target).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("LINE target update failed: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
 pub async fn get_webhook_url(config_state: State<'_, ConfigState>) -> Result<String, String> {
     match crate::config_manager::get_webhook_url(config_state).await {
         Ok(url) => Ok(url),
@@ -431,6 +473,41 @@ pub async fn get_interval(config_state: State<'_, ConfigState>) -> Result<String
         Ok(url) => Ok(url),
         Err(e) => {
             error!("監視間隔の取得に失敗しました: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_line_enabled(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    match crate::config_manager::get_line_enabled(config_state).await {
+        Ok(enabled) => Ok(enabled),
+        Err(e) => {
+            error!("LINE enabled flag read failed: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_line_channel_access_token_configured(
+    config_state: State<'_, ConfigState>,
+) -> Result<bool, String> {
+    match crate::config_manager::get_line_channel_access_token_configured(config_state).await {
+        Ok(configured) => Ok(configured),
+        Err(e) => {
+            error!("LINE channel access token state read failed: {}", e);
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_line_target(config_state: State<'_, ConfigState>) -> Result<String, String> {
+    match crate::config_manager::get_line_target(config_state).await {
+        Ok(target) => Ok(target),
+        Err(e) => {
+            error!("LINE target read failed: {}", e);
             Err(e)
         }
     }

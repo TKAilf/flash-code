@@ -46,8 +46,6 @@ pub async fn send_discord_notification(app_name: &str, config_path: PathBuf) {
                 return;
             }
         };
-        info!("config_data: {:?}", config_data);
-
         let config: Value = match serde_json::from_str(&config_data) {
             Ok(json) => json,
             Err(e) => {
@@ -55,8 +53,6 @@ pub async fn send_discord_notification(app_name: &str, config_path: PathBuf) {
                 return;
             }
         };
-        info!("config: {:?}", config);
-
         match config["DISCORD_WEBHOOK_URL"].as_str() {
             Some(url) => url.to_string(),
             None => {

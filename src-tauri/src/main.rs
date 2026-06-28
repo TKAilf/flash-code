@@ -67,9 +67,15 @@ fn main() {
             commands::update_webhook_url,
             commands::update_threshold,
             commands::update_interval,
+            commands::update_line_enabled,
+            commands::update_line_channel_access_token,
+            commands::update_line_target,
             commands::get_webhook_url,
             commands::get_threshold,
             commands::get_interval,
+            commands::get_line_enabled,
+            commands::get_line_channel_access_token_configured,
+            commands::get_line_target,
             commands::log_from_frontend
         ])
         .run(tauri::generate_context!())

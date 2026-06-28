@@ -5,6 +5,17 @@ interface ConfigContainerProps {
     handleWebhookUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSetWebhookUrl: () => void;
     currentWebhookUrl: string;
+    lineEnabled: boolean;
+    handleLineEnabledChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    lineChannelAccessToken: string;
+    handleLineChannelAccessTokenChange: (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => void;
+    lineTarget: string;
+    handleLineTargetChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleSetLineConfig: () => void;
+    currentLineChannelAccessTokenConfigured: boolean;
+    currentLineTarget: string;
     threshold: string;
     handleThresholdTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleThresholdSelectChange: (
@@ -26,6 +37,15 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     handleWebhookUrlChange,
     handleSetWebhookUrl,
     currentWebhookUrl,
+    lineEnabled,
+    handleLineEnabledChange,
+    lineChannelAccessToken,
+    handleLineChannelAccessTokenChange,
+    lineTarget,
+    handleLineTargetChange,
+    handleSetLineConfig,
+    currentLineChannelAccessTokenConfigured,
+    currentLineTarget,
     threshold,
     handleThresholdTextChange,
     handleThresholdSelectChange,
@@ -45,7 +65,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     return (
         <div className="cover-config-container">
             <div className="hover-config-container">
-                <div className="header-text">設定</div>
+                <div className="header-text">Settings</div>
                 <div className="config-container">
                     <div className="title-toggle-group">
                         <span className="config-title">
@@ -60,17 +80,69 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                 onChange={handleWebhookUrlChange}
                                 placeholder="Discord Webhook URL"
                             />
-                            <button onClick={handleSetWebhookUrl}>設定</button>
+                            <button onClick={handleSetWebhookUrl}>Set</button>
                         </div>
                         <div className="current-value">
-                            設定中の URL: {currentWebhookUrl || "未設定"}
+                            Current URL: {currentWebhookUrl || "Not configured"}
                         </div>
                     </div>
 
                     <div className="title-toggle-group">
-                        <span className="config-title">2. 画像しきい値</span>
+                        <span className="config-title">2. LINE Bot</span>
                         <div className="toggle-group">
-                            <span className="toggle-text-before">簡易</span>
+                            <span className="toggle-text-before">Off</span>
+                            <label className="toggle-button">
+                                <input
+                                    type="checkbox"
+                                    checked={lineEnabled}
+                                    onChange={handleLineEnabledChange}
+                                />
+                            </label>
+                            <span className="toggle-text-after">On</span>
+                        </div>
+                    </div>
+                    <div
+                        className={`config-group collapsible-config ${
+                            lineEnabled ? "expanded" : "collapsed"
+                        }`}
+                    >
+                        <div className="set-config-group stacked-config-group">
+                            <input
+                                type="password"
+                                value={lineChannelAccessToken}
+                                onChange={handleLineChannelAccessTokenChange}
+                                placeholder="LINE Channel Access Token"
+                                disabled={!lineEnabled}
+                            />
+                            <input
+                                type="text"
+                                value={lineTarget}
+                                onChange={handleLineTargetChange}
+                                placeholder="LINE Target ID"
+                                disabled={!lineEnabled}
+                            />
+                            <button
+                                onClick={handleSetLineConfig}
+                                disabled={!lineEnabled}
+                            >
+                                Set LINE
+                            </button>
+                        </div>
+                        <div className="current-value">
+                            Token:{" "}
+                            {currentLineChannelAccessTokenConfigured
+                                ? "Configured"
+                                : "Not configured"}
+                        </div>
+                        <div className="current-value">
+                            Target: {currentLineTarget || "Not configured"}
+                        </div>
+                    </div>
+
+                    <div className="title-toggle-group">
+                        <span className="config-title">3. Image threshold</span>
+                        <div className="toggle-group">
+                            <span className="toggle-text-before">Simple</span>
                             <label className="toggle-button">
                                 <input
                                     type="checkbox"
@@ -78,7 +150,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                     onChange={toggleThresholdMode}
                                 />
                             </label>
-                            <span className="toggle-text-after">詳細</span>
+                            <span className="toggle-text-after">Detail</span>
                         </div>
                     </div>
                     <div className="config-group">
@@ -99,28 +171,24 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                         value={threshold}
                                         onChange={handleThresholdSelectChange}
                                     >
-                                        <option value="">
-                                            -- 選択してください --
-                                        </option>
-                                        <option value="0.020">高精度</option>
-                                        <option value="0.040">標準</option>
-                                        <option value="0.060">低精度</option>
+                                        <option value="">-- Select --</option>
+                                        <option value="0.020">High precision</option>
+                                        <option value="0.040">Standard</option>
+                                        <option value="0.060">Low precision</option>
                                     </select>
                                 </div>
                             )}
-                            <button onClick={handleSetThreshold}>設定</button>
+                            <button onClick={handleSetThreshold}>Set</button>
                         </div>
                         <div className="current-value">
-                            設定中のしきい値: {currentThreshold}
+                            Current threshold: {currentThreshold}
                         </div>
                     </div>
 
                     <div className="title-toggle-group">
-                        <span className="config-title">
-                            3. 監視間隔(ms)
-                        </span>
+                        <span className="config-title">4. Interval (ms)</span>
                         <div className="toggle-group">
-                            <span className="toggle-text-before">簡易</span>
+                            <span className="toggle-text-before">Simple</span>
                             <label className="toggle-button">
                                 <input
                                     type="checkbox"
@@ -128,7 +196,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                     onChange={toggleIntervalMode}
                                 />
                             </label>
-                            <span className="toggle-text-after">詳細</span>
+                            <span className="toggle-text-after">Detail</span>
                         </div>
                     </div>
                     <div className="config-group">
@@ -140,7 +208,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                     step="100"
                                     value={interval}
                                     onChange={handleIntervalTextChange}
-                                    placeholder="100 以上"
+                                    placeholder="100 or more"
                                 />
                             ) : (
                                 <div className="config-select">
@@ -148,19 +216,17 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                                         value={interval}
                                         onChange={handleIntervalSelectChange}
                                     >
-                                        <option value="">
-                                            -- 選択してください --
-                                        </option>
-                                        <option value="500">高速</option>
-                                        <option value="1000">標準</option>
-                                        <option value="3000">低負荷</option>
+                                        <option value="">-- Select --</option>
+                                        <option value="500">Fast</option>
+                                        <option value="1000">Standard</option>
+                                        <option value="3000">Low load</option>
                                     </select>
                                 </div>
                             )}
-                            <button onClick={handleSetInterval}>設定</button>
+                            <button onClick={handleSetInterval}>Set</button>
                         </div>
                         <div className="current-value">
-                            設定中の監視間隔(ms): {currentInterval}
+                            Current interval (ms): {currentInterval}
                         </div>
                     </div>
                 </div>
