@@ -1,5 +1,6 @@
 import React from "react";
 import { FaQuestionCircle } from "react-icons/fa";
+import { LineSetupGuide } from "./LineSetupGuide";
 
 interface ConfigContainerProps {
     webhookUrl: string;
@@ -73,11 +74,39 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
     const [isMinimizeHelpOpen, setIsMinimizeHelpOpen] =
         React.useState(false);
     const minimizeHelpId = "minimize-on-monitor-start-help";
+    const [activeTab, setActiveTab] = React.useState<"settings" | "line-guide">("settings");
+    const showTab = (tab: "settings" | "line-guide") => {
+        setActiveTab(tab);
+        requestAnimationFrame(() => {
+            document.getElementById(`${tab}-tab`)?.focus();
+            document.getElementById("settings-tabs")?.scrollIntoView({ block: "start" });
+        });
+    };
 
     return (
         <div className="cover-config-container">
             <div className="hover-config-container">
                 <div className="header-text">Settings</div>
+                <div id="settings-tabs" className="settings-tabs" role="tablist" aria-label="設定とガイド">
+                    {(["settings", "line-guide"] as const).map((tab) => (
+                        <button key={tab} id={`${tab}-tab`} type="button" role="tab"
+                            aria-selected={activeTab === tab} aria-controls={`${tab}-panel`}
+                            tabIndex={activeTab === tab ? 0 : -1}
+                            onClick={() => showTab(tab)}
+                            onKeyDown={(event) => {
+                                if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+                                    event.preventDefault();
+                                    showTab(event.key === "Home" ? "settings" : event.key === "End" ? "line-guide" : tab === "settings" ? "line-guide" : "settings");
+                                }
+                            }}>
+                            {tab === "settings" ? "設定" : "LINE 設定ガイド"}
+                        </button>
+                    ))}
+                </div>
+                <div id="line-guide-panel" role="tabpanel" aria-labelledby="line-guide-tab" hidden={activeTab !== "line-guide"}>
+                    <LineSetupGuide onBack={() => showTab("settings")} />
+                </div>
+                <div id="settings-panel" role="tabpanel" aria-labelledby="settings-tab" hidden={activeTab !== "settings"}>
                 <div className="config-container">
                     <div className="title-toggle-group">
                         <span className="config-title">
@@ -114,20 +143,29 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                             <span className="toggle-text-after">On</span>
                         </div>
                     </div>
+                    <div className="line-config-guide">
+                        <button type="button" onClick={() => showTab("line-guide")}>設定方法を見る →</button>
+                    </div>
                     <div
                         className={`config-group collapsible-config ${
                             lineEnabled ? "expanded" : "collapsed"
                         }`}
                     >
                         <div className="set-config-group stacked-config-group">
+                            <label htmlFor="line-channel-access-token">Channel Access Token（Bot の認証情報）</label>
                             <input
+                                id="line-channel-access-token"
+                                aria-describedby="line-token-help"
                                 type="password"
                                 value={lineChannelAccessToken}
                                 onChange={handleLineChannelAccessTokenChange}
                                 placeholder="LINE Channel Access Token"
                                 disabled={!lineEnabled}
                             />
+                            <p id="line-token-help" className="line-field-help">{currentLineChannelAccessTokenConfigured ? "設定済み（変更する場合のみ入力）" : "未設定"}</p>
+                            <label htmlFor="line-target">Target ID（通知の宛先）</label>
                             <input
+                                id="line-target"
                                 type="text"
                                 value={lineTarget}
                                 onChange={handleLineTargetChange}
@@ -306,6 +344,7 @@ export const ConfigContainer: React.FC<ConfigContainerProps> = ({
                             Current interval (ms): {currentInterval}
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

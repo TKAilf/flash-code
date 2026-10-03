@@ -273,6 +273,15 @@ button:focus {
     margin: 20px;
     padding: 20px;
 }
+.hover-config-container {
+    border: 4px solid var(--color-border);
+    border-radius: var(--border-radius-default);
+    background-color: var(--color-bg-dark);
+}
+.hover-config-container > .header-text {
+    border: none;
+    border-radius: 4px 4px 0 0;
+}
 .hover-config-container:hover {
     transition: box-shadow var(--transition-slow);
     box-shadow: 0 0 5px 1px var(--color-border);
@@ -285,7 +294,7 @@ button:focus {
     align-items: center;
     padding: 20px 30px;
     background-color: var(--color-bg-dark);
-    border: 4px solid var(--color-border);
+    border: none;
     border-bottom-right-radius: var(--border-radius-default);
     border-bottom-left-radius: var(--border-radius-default);
 }
@@ -428,6 +437,134 @@ button:focus {
 }
 .config-container .stacked-config-group {
     flex-direction: column;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: left;
+}
+.config-container .line-config-guide {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 16px;
+    text-align: left;
+    line-height: 1.6;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.settings-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px 0;
+    border-bottom: 1px solid #777;
+    background: var(--color-bg-dark);
+    white-space: normal;
+}
+.settings-tabs button {
+    padding: 10px 18px;
+    min-height: 44px;
+    font: inherit;
+    line-height: 1.4;
+    border: 1px solid #777;
+    border-radius: 6px 6px 0 0;
+    background: #252525;
+    color: var(--color-text);
+    box-shadow: none;
+    border-bottom: 3px solid transparent;
+}
+.settings-tabs button:hover { background: #414b41; }
+.settings-tabs button[aria-selected="true"] {
+    border-bottom-color: var(--color-green);
+    background: #344534;
+}
+.settings-tabs button:focus-visible,
+.line-setup-guide button:focus-visible,
+.line-setup-guide summary:focus-visible {
+    outline: 2px solid var(--color-blue-light);
+    outline-offset: 3px;
+}
+.line-setup-guide {
+    background: var(--color-bg-dark);
+    padding: 24px clamp(16px, 4vw, 48px);
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.65;
+    border-radius: 0 0 4px 4px;
+}
+.line-setup-guide,
+.line-setup-guide * { box-sizing: border-box; }
+.line-setup-guide > * {
+    width: 100%;
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.line-setup-guide h2 { margin-top: 0; }
+.line-guide-map {
+    padding: 16px;
+    background: #242c28;
+    border: 1px solid #6c8e75;
+    border-radius: 8px;
+}
+.line-guide-map figcaption { margin-bottom: 12px; color: #bdd7c4; }
+.line-guide-map > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+}
+.line-guide-map code { padding: 10px; background: #191f1b; border-radius: 6px; }
+.line-guide-steps { padding: 0; list-style: none; }
+.line-guide-steps li {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    background: #292929;
+    border: 1px solid #626262;
+    border-radius: 8px;
+}
+.line-guide-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #36583e;
+    font-weight: bold;
+}
+.line-guide-steps h3 { margin: 0 0 8px; }
+.line-guide-steps p { margin: 8px 0 0; }
+.line-guide-location { color: #bdd7c4; }
+.line-guide-notes { padding: 12px 0; }
+.line-guide-notes summary { cursor: pointer; }
+.line-guide-notes li + li { margin-top: 8px; }
+.line-guide-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.line-guide-links button { background: #252525; color: #c1ddff; border: 1px solid #777; }
+.line-setup-guide button {
+    padding: 10px 16px;
+    min-height: 44px;
+    font: inherit;
+    line-height: 1.4;
+    border-radius: 6px;
+    box-shadow: none;
+    cursor: pointer;
+}
+.line-guide-links button:hover { background: #39434c; border-color: #c1ddff; }
+.line-guide-actions { margin-top: 24px; }
+.line-guide-actions button {
+    background: var(--color-green);
+    border: 1px solid transparent;
+    color: white;
+}
+.line-guide-actions button:hover { background: var(--color-green-hover); }
+.line-guide-caption { font-size: 0.875rem; color: #ccc; }
+.config-container .line-field-help {
+    margin: 0;
+    text-align: left;
+    line-height: 1.5;
 }
 .config-container .collapsible-config {
     overflow: hidden;
@@ -439,7 +576,7 @@ button:focus {
     pointer-events: none;
 }
 .config-container .collapsible-config.expanded {
-    max-height: 260px;
+    max-height: none;
     opacity: 1;
 }
 .config-container .config-select {
